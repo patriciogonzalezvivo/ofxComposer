@@ -1,0 +1,3 @@
+ofxGLEditor
+ofxComposer
+ofxXmlSettings
