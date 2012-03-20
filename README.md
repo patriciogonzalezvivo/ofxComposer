@@ -85,4 +85,6 @@ Also you can explore ofxGLEditor because it have some other handy shortcut key b
 
 On the example you will see how the xml it´s made. This particular config.xml It´ll load ofxGLEditor, your webcam video and a basic shader. You can try new combination by dragging different files (like videos, images and fragment shaders files) to the app windows.
 
+Also you can see some [video tutorials at this link](http://www.patriciogonzalezvivo.com/blog/?p=585&preview=true&preview_id=585&preview_nonce=76dfe3d870)
+
 Enjoy && contribute!
