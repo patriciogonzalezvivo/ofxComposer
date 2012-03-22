@@ -18,14 +18,10 @@ class ofxComposer {
 public:
     ofxComposer();
     
-    ofTexture& operator[](int _nId);
-    
     void    load(string _fileConfig = "default");
     bool    addPatch(string _filePath, ofPoint _position);
     
-    void    focusOnPatch( int _nID );
-    void    setTexture(ofTexture &_texture, int _nID);
-    ofTexture& getTexture(int _nID);
+    ofxPatch* operator[](int _nID){ if ( (_nID != -1) && (patches[_nID] != NULL) ) return patches[_nID]; };
     
     void    update();
     void    draw();
@@ -38,8 +34,8 @@ private:
 	void    _mouseReleased(ofMouseEventArgs &e);
 	void    _windowResized(ofResizeEventArgs &e);
     
-    
     void    closePatch( int &_nID );
+    void    activePatch( int _nID );
     bool    connect( int _fromID, int _toID, int _nTexture );
     
 	ofxGLEditor editor;

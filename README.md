@@ -1,6 +1,6 @@
 # ofxComposer
 
-It´s a set of connecting boxes that let you load and processes different type of data on the GPU. 
+This idea came up with James George at Detroit´s oF DevCon 2012. It consist on a set of connecting boxes that let you load and processes different type of data on the GPU. 
 It´s designed to be flexible and visually minimalist for quick editing on life performances. But also very handy for graphically debugging, editing GLSL Shaders on the fly, and as a complement of ofxGui. 
 
 ## Instalation

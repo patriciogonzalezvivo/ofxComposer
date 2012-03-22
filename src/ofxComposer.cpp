@@ -15,6 +15,11 @@ ofxComposer::ofxComposer(){
 	ofAddListener(ofEvents().keyPressed, this, &ofxComposer::_keyPressed);
     ofAddListener(ofEvents().windowResized, this, &ofxComposer::_windowResized);
     
+    editorFbo.allocate(640, 480);
+    editorFbo.begin();
+    ofClear(0, 0);
+    editorFbo.end();
+    
     configFile = "config.xml";
     selectedDot = -1;
     selectedID = -1;
@@ -98,16 +103,6 @@ void ofxComposer::load(string _fileConfig){
         }
     }
 }
-
-void ofxComposer::setTexture(ofTexture &_texture, int _nID ){
-    if ( (_nID != -1) && (patches[_nID] != NULL) )
-        patches[_nID]->setTexture( _texture , 0);
-}
-
-ofTexture& ofxComposer::getTexture(int _nID){ 
-    if ( (_nID != -1) && (patches[_nID] != NULL) )
-        return patches[_nID]->getTextureReference(); 
-};
 
 bool ofxComposer::addPatch(string _filePath, ofPoint _position){
     bool loaded = false;
@@ -258,13 +253,13 @@ void ofxComposer::_mouseMoved(ofMouseEventArgs &e){
     
     for(map<int,ofxPatch*>::reverse_iterator rit = patches.rbegin(); rit != patches.rend(); rit++ ){
         if (rit->second->isOver(mouse)){
-            focusOnPatch( rit->first );
+            activePatch( rit->first );
             break;
         }
     }
 }
 
-void ofxComposer::focusOnPatch( int _nID ){
+void ofxComposer::activePatch( int _nID ){
     if ( (_nID != -1) && (patches[_nID] != NULL) ){
         selectedID = _nID;
         
