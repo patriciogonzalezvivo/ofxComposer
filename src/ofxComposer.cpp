@@ -16,8 +16,8 @@ ofxComposer::ofxComposer(){
     ofAddListener(ofEvents().windowResized, this, &ofxComposer::_windowResized);
     
     configFile = "config.xml";
-    selected = -1;
     selectedDot = -1;
+    selectedID = -1;
     bGLEditor = false;
 }
 
@@ -56,35 +56,37 @@ void ofxComposer::load(string _fileConfig){
                     nPatch->setTexture( editorFbo.getTextureReference(), 0);
                 }
                 
-                // Insert the new patch into the verctor
-                //
-                patches.push_back(nPatch);
                 
                 // Listen to close bottom on the titleBar
                 //
-                ofAddListener( patches[ patches.size()-1 ]->title->close , this, &ofxComposer::closePatch);
+                ofAddListener( nPatch->title->close , this, &ofxComposer::closePatch);
+                
+                // Insert the new patch into the map
+                //
+                patches[nPatch->getId()] = nPatch;
             }
         }
-        
         
         // Load links between Patchs
         //
         for(int i = 0; i < totalPatchs ; i++){
             if (XML.pushTag("surface", i)){
+                int fromID = XML.getValue("id", -1);
+                
                 if (XML.pushTag("out")){
-                    
+    
                     int totalLinks = XML.getNumTags("dot");
                     for(int j = 0; j < totalLinks ; j++){
                         
                         if (XML.pushTag("dot",j)){
-                            int toId = XML.getValue("to", 0);
-                            int toTex = XML.getValue("tex", 0);
+                            int toID = XML.getValue("to", 0);
+                            int nTex = XML.getValue("tex", 0);
                             
                             // If everything goes ok "i" will match the position of the vector
                             // with the position on the XML, in the same place of the vector array
                             // defined on the previus loop
                             //
-                            connect( i , fromIDtoArrayPos( toId ), toTex);
+                            connect( fromID, toID, nTex);
                             
                             XML.popTag();
                         }
@@ -97,32 +99,15 @@ void ofxComposer::load(string _fileConfig){
     }
 }
 
-void ofxComposer::setTexture(ofTexture &_texture, int _nId ){
-    int n = fromIDtoArrayPos(_nId);
-    if (n != -1)
-        patches[n]->setTexture( _texture , 0);
+void ofxComposer::setTexture(ofTexture &_texture, int _nID ){
+    if ( (_nID != -1) && (patches[_nID] != NULL) )
+        patches[_nID]->setTexture( _texture , 0);
 }
 
-ofTexture& ofxComposer::getTexture(int _nId){ 
-    int n = fromIDtoArrayPos(_nId);
-    
-    if ( n != -1){
-        if ((n < patches.size()) && (n >= 0) ) 
-            return patches[n]->getTextureReference(); 
-    } 
+ofTexture& ofxComposer::getTexture(int _nID){ 
+    if ( (_nID != -1) && (patches[_nID] != NULL) )
+        return patches[_nID]->getTextureReference(); 
 };
-
-int ofxComposer::fromIDtoArrayPos(int _nId){
-    int found = -1;
-    
-    for (int i = 0; i < patches.size(); i++){
-        if (patches[i]->getId() == _nId){
-            found = i;
-        }
-    }
-    
-    return found;
-}
 
 bool ofxComposer::addPatch(string _filePath, ofPoint _position){
     bool loaded = false;
@@ -131,49 +116,46 @@ bool ofxComposer::addPatch(string _filePath, ofPoint _position){
     loaded = nPatch->loadFile( _filePath, "config.xml" );
     
     if ( loaded ){
-        //nPatch->saveSettings();
         nPatch->move( _position );
         nPatch->scale(0.5);
-        
-        patches.push_back(nPatch);
-        
-        ofAddListener( patches[ patches.size()-1 ]->title->close , this, &ofxComposer::closePatch);
+        nPatch->saveSettings();
+        ofAddListener( nPatch->title->close , this, &ofxComposer::closePatch);
+        patches[nPatch->getId()] = nPatch;
     }
     
     return loaded;
 }
 
-bool ofxComposer::connect( int fromPatchN, int toPatchN, int inDotN ){
+bool ofxComposer::connect( int _fromID, int _toID, int nTexture ){
     bool connected = false;
     
-    if (patches[ toPatchN ]->getType() == "ofShader") {
-        LinkDot newDot;
-        newDot.pos = patches[ fromPatchN ]->getOutPutPosition();
-        newDot.toId = patches[ toPatchN ]->getId();
-        newDot.to = &(patches[ toPatchN ]->inPut[ inDotN ]);
-        newDot.toShader = patches[ toPatchN ]->getShader();
-        newDot.nTex = inDotN;
+    if ((_fromID != -1) && (patches[_fromID] != NULL) && 
+        (_toID != -1) && (patches[_toID] != NULL) && 
+        (patches[ _toID ]->getType() == "ofShader") ) {
         
-        patches[ fromPatchN ]->outPut.push_back( newDot );
+        LinkDot newDot;
+        newDot.pos = patches[ _fromID ]->getOutPutPosition();
+        newDot.toId = patches[ _toID ]->getId();
+        newDot.to = &(patches[ _toID ]->inPut[ nTexture ]);
+        newDot.toShader = patches[ _toID ]->getShader();
+        newDot.nTex = nTexture;
+        
+        patches[ _fromID ]->outPut.push_back( newDot );
         connected = true;
     }
     
     return connected;
 }
 
-void ofxComposer::closePatch( int &_nId ){
-    int n = fromIDtoArrayPos(_nId);
-
+void ofxComposer::closePatch( int &_nID ){
     bool deleted = false;
-    
-    if ( (n >= 0) && ( n < patches.size() ) ){        
-        
-        int targetId = patches[n]->getId();
+         
+    if ( (_nID != -1) && (patches[_nID] != NULL) ){
         int targetTag = 0;
         
         // Delete object from the vector 
         //
-        patches.erase(patches.begin()+ n);
+        patches.erase(_nID);
         
         // Delete XML Data
         //
@@ -182,7 +164,7 @@ void ofxComposer::closePatch( int &_nId ){
             int totalSurfaces = XML.getNumTags("surface");
             for (int i = 0; i < totalSurfaces; i++){
                 if (XML.pushTag("surface", i)){
-                    if ( XML.getValue("id", -1) == targetId){
+                    if ( XML.getValue("id", -1) == _nID){
                         targetTag = i;
                     }
                     XML.popTag();
@@ -195,21 +177,23 @@ void ofxComposer::closePatch( int &_nId ){
         
         // Delete links Dependences
         //
-        for (int i = 0; i < patches.size(); i++){
-            for (int j = patches[i]->outPut.size()-1; j >= 0 ; j--){
-                if ( patches[i]->outPut[j].toId == targetId ){
-                    patches[i]->outPut.erase(patches[i]->outPut.begin() + j );
-                    patches[i]->saveSettings();
+        for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+            for (int j = it->second->outPut.size()-1; j >= 0 ; j--){
+                if ( it->second->outPut[j].toId == _nID){
+                    it->second->outPut.erase( it->second->outPut.begin() + j );
+                    it->second->saveSettings();
                 }
             }
         }
+        
+        selectedID = -1;
     }
 }
 
 //-------------------------------------------------------------- LOOP
 void ofxComposer::update(){
-    for(int i = 0; i < patches.size(); i++){
-        patches[i]->update();
+    for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+        it->second->update();
     }
 }
 
@@ -220,12 +204,12 @@ void ofxComposer::draw(){
     ofPushMatrix();
     
     ofEnableAlphaBlending();
-    for(int i = 0; i < patches.size(); i++){
-        patches[i]->draw();
+    for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+        it->second->draw();
     }
     
-    if ( bGLEditor && (selected >= 0)){
-        if (patches[selected]->getType() == "ofShader"){
+    if ( bGLEditor && (selectedID >= 0)){
+        if (patches[selectedID]->getType() == "ofShader"){
             editorFbo.begin();
             ofClear(0, 150);
             ofRotate(180, 0, 1, 0);
@@ -255,10 +239,10 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
     if (bGLEditor)
         editor.keyPressed(e.key);
     
-    if (selected >= 0){
-        if (patches[selected]->getType() == "ofShader"){
-            patches[selected]->setFrag(editor.getText(1));
-            patches[selected]->saveSettings();
+    if (selectedID >= 0){
+        if (patches[selectedID]->getType() == "ofShader"){
+            patches[selectedID]->setFrag(editor.getText(1));
+            patches[selectedID]->saveSettings();
         }
     }
     
@@ -272,22 +256,23 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
 void ofxComposer::_mouseMoved(ofMouseEventArgs &e){
     ofVec2f mouse = ofVec2f(e.x, e.y);
     
-    for(int i = patches.size() -1 ; i >= 0; i--){
-        if (patches[i]->isOver(mouse)){
-            focusOnPatch(i);
+    for(map<int,ofxPatch*>::reverse_iterator rit = patches.rbegin(); rit != patches.rend(); rit++ ){
+        if (rit->second->isOver(mouse)){
+            focusOnPatch( rit->first );
             break;
         }
     }
 }
 
-void ofxComposer::focusOnPatch( int _arrayPos ){
-    selected = _arrayPos;
-    
-    for(int i = 0; i < patches.size(); i++){
-        if (i == selected){
-            patches[i]->bActive = true;
-        } else {
-            patches[i]->bActive = false;
+void ofxComposer::focusOnPatch( int _nID ){
+    if ( (_nID != -1) && (patches[_nID] != NULL) ){
+        selectedID = _nID;
+        
+        for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+            if (it->first == _nID)
+                it->second->bActive = true;
+            else
+                it->second->bActive = false;
         }
     }
 }
@@ -296,21 +281,21 @@ void ofxComposer::_mousePressed(ofMouseEventArgs &e){
     ofVec2f mouse = ofVec2f(e.x, e.y);
 
     selectedDot = -1;    
-    for(int i = 0; i < patches.size(); i++){
-        if ( (patches[i]->getOutPutPosition().distance(mouse) < 5) && (patches[i]->bEditMode) && !(patches[i]->bEditMask) ){
-            selectedDot = i;
-            patches[i]->bActive = false;
-            selected = -1;
+    for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+        if ( (it->second->getOutPutPosition().distance(mouse) < 5) && (it->second->bEditMode) && !(it->second->bEditMask) ){
+            selectedDot = it->first;
+            it->second->bActive = false;
+            selectedID = -1;
         }
     }
     
     if (selectedDot == -1){
-        for(int i = 0; i < patches.size(); i++){
-            if ((patches[i]->bActive) && (patches[i]->bEditMode) && !(patches[i]->bEditMask)){
-                selected = i;
+        for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+            if ((it->second->bActive) && (it->second->bEditMode) && !(it->second->bEditMask)){
+                selectedID = it->first;
                 
-                if (bGLEditor && (patches[selected]->getType() == "ofShader")){
-                    editor.setText(patches[i]->getFrag(), 1);
+                if (bGLEditor && (it->second->getType() == "ofShader")){
+                    editor.setText(it->second->getFrag(), 1);
                 }
             }
         }
@@ -321,25 +306,24 @@ void ofxComposer::_mouseReleased(ofMouseEventArgs &e){
     ofVec2f mouse = ofVec2f(e.x, e.y);
     
     if (selectedDot != -1){
-        for(int i = 0; i < patches.size(); i++){
-            
-            if ((selectedDot != i) &&                   // If not him self
-                (patches[i]->getType() == "ofShader") &&   // The target it´s a shader
-                (patches[i]->bEditMode) &&               // And we are in editMode and not on maskMode
-                !(patches[i]->bEditMask) ){
+        for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+            if ((selectedDot != it->first) &&                   // If not him self
+                (it->second->getType() == "ofShader") &&   // The target it´s a shader
+                (it->second->bEditMode) &&               // And we are in editMode and not on maskMode
+                !(it->second->bEditMask) ){
                 
-                for (int j = 0; j < patches[i]->inPut.size(); j++){
+                for (int j = 0; j < it->second->inPut.size(); j++){
                     
                     // And after checking in each dot of each shader...
                     // ... fin the one where the mouse it´s over
                     //
-                    if ( patches[i]->inPut[j].pos.distance(mouse) < 5){
+                    if ( it->second->inPut[j].pos.distance(mouse) < 5){
                         
                         // Once he founds it
                         // make the link and forget the selection
                         //
-                        connect( selectedDot , i, j );
-                        patches[selectedDot]->saveSettings();
+                        connect( selectedDot , it->first, j );
+                        patches[ selectedDot ]->saveSettings();
                         selectedDot = -1;
                     }
                 }

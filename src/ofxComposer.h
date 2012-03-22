@@ -23,8 +23,9 @@ public:
     void    load(string _fileConfig = "default");
     bool    addPatch(string _filePath, ofPoint _position);
     
-    void    setTexture(ofTexture &_texture, int _nId);
-    ofTexture& getTexture(int _nId);
+    void    focusOnPatch( int _nID );
+    void    setTexture(ofTexture &_texture, int _nID);
+    ofTexture& getTexture(int _nID);
     
     void    update();
     void    draw();
@@ -37,19 +38,19 @@ private:
 	void    _mouseReleased(ofMouseEventArgs &e);
 	void    _windowResized(ofResizeEventArgs &e);
     
-    void    focusOnPatch( int _arrayPos );
-    void    closePatch( int &_nId );
-    bool    connect( int _fromPatchN, int _toPatchN, int _inDotN );
-    int     fromIDtoArrayPos( int _nId );
+    
+    void    closePatch( int &_nID );
+    bool    connect( int _fromID, int _toID, int _nTexture );
     
 	ofxGLEditor editor;
     ofFbo       editorFbo;
     
-    vector<ofxPatch*>    patches;
+    map<int,ofxPatch*>  patches;
+    
     string  configFile;
     
     int     selectedDot;
-    int     selected;
+    int     selectedID;
     
     bool    bGLEditor;
 };
