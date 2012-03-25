@@ -240,12 +240,6 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
             patches[selectedID]->saveSettings();
         }
     }
-    
-    switch (e.key) {
-        case OF_KEY_F1:
-            ofToggleFullscreen();
-            break;
-    }
 }
 
 void ofxComposer::_mouseMoved(ofMouseEventArgs &e){

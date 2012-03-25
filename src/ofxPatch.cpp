@@ -123,7 +123,7 @@ void ofxPatch::setFrag( string _code){
 void ofxPatch::setTexture(ofTexture& tex, int _texNum){
     if ( shader != NULL ){
         shader->setTexture(tex, _texNum);
-    } else if ( (type == "ofxGLEditor") || (type == "input") ){
+    } else {
         texture = &tex;
     }
 }
@@ -164,6 +164,7 @@ void ofxPatch::update(){
         height = getSrcTexture().getHeight();
         
         bUpdateCoord = true;
+        bUpdateMask = true;
     }
     
     if (bUpdateMask){
@@ -1069,12 +1070,12 @@ bool ofxPatch::loadSettings( int _nTag, string _configFile){
             } else if( type == "ofxGLEditor" ){
                 title->setTitle(ofToString(nId) + ":" + type );
                 loaded = true;
-            } else if ( type == "input") {
+            } else if (( type == "ofImage") || ( type == "ofVideoPlayer")){
+                loaded = loadFile( path );
+            } else {
                 title->setTitle(ofToString(nId) + ":" + type );
                 loaded = true;
-            } else {
-                loaded = loadFile( path );
-            }
+            } 
             
             if (loaded){
                 // Load the texture coorners
