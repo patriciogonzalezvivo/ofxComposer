@@ -44,11 +44,16 @@ public:
 
     void            setFrag( string _code);
     //void          setVert( string _code);
+    void            setMask(ofPolyline& _polyLine){ maskCorners = _polyLine; bMasking = true; bUpdateMask = true; };
+    void            setCoorners(ofPoint _coorners[4]);
     void            setTexture(ofTexture& tex, int _texNum = 0);
     
     int             getId() const { return nId; };
     ofPoint         getPos() const { return ofPoint(x,y); };
     string          getType() const { return (shader != NULL)? "ofShader" : type; };
+    ofPoint         getSurfaceToScreen(ofPoint _pos){ return surfaceToScreenMatrix * _pos; };
+    ofPoint         getScreenToSurface(ofPoint _pos){ return screenToSurfaceMatrix * _pos; };
+    GLfloat*        getGlMatrix() { return glMatrix; };
     string          getFrag();
     //string        getVert();
     ofTexture&      getTextureReference();

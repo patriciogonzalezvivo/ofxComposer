@@ -128,6 +128,14 @@ void ofxPatch::setTexture(ofTexture& tex, int _texNum){
     }
 }
 
+void ofxPatch::setCoorners(ofPoint _coorners[4]){
+    for (int i = 0; i < 4; i++){
+        textureCorners[i].set(_coorners[i]);
+    }
+    bUpdateCoord = true;
+    bUpdateMask = true;
+}
+
 string ofxPatch::getFrag(){
     if ( shader != NULL ){
         return shader->getFragmentShader();
@@ -147,6 +155,8 @@ ofTexture& ofxPatch::getSrcTexture(){
         return shader->getTextureReference();
     else if (texture != NULL)
         return *texture;
+    else 
+        return maskFbo.dst->getTextureReference();
 }
 
 ofTexture& ofxPatch::getTextureReference(){
@@ -669,8 +679,7 @@ void ofxPatch::_mousePressed(ofMouseEventArgs &e){
             //
             bool overDot = false;
             for(int i = 0; i < maskCorners.size(); i++){
-                ofVec3f pos = ofVec3f( maskCorners[i].x * width, maskCorners[i].y * height, 0.0);
-                pos = surfaceToScreenMatrix * pos;
+                ofVec3f pos = getSurfaceToScreen( ofPoint(maskCorners[i].x * width, maskCorners[i].y * height));
                 
                 if ( ofDist(e.x, e.y, pos.x, pos.y) <= 10 ){
                     selectedMaskCorner = i;

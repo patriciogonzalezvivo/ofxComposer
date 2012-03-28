@@ -54,9 +54,7 @@ void ofxTitleBar::draw(){
     
     // Draw the bottoms
     //
-    
     string buttonString;
-    
     for (int i = 0; i < buttons.size(); i++){
         ofSetColor(100);
         if ( buttons[i].state != NULL){
