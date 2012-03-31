@@ -6,13 +6,17 @@
 //  Copyright (c) 2012 http://www.PatricioGonzalezVivo.com All rights reserved.
 //
 
+#define USE_OFXGLEDITOR
+
 #ifndef OFXCOMPOSER
 #define OFXCOMPOSER
 
 #include "ofMain.h"
 #include "ofxPatch.h"
 
+#ifdef USE_OFXGLEDITOR
 #include "ofxGLEditor.h"
+#endif
 
 class ofxComposer {
 public:
@@ -37,9 +41,11 @@ private:
     void    closePatch( int &_nID );
     void    activePatch( int _nID );
     bool    connect( int _fromID, int _toID, int _nTexture );
-    
+
+#ifdef USE_OFXGLEDITOR
 	ofxGLEditor editor;
-    ofFbo       editorFbo;
+#endif
+    ofFbo       fbo;
     
     map<int,ofxPatch*>  patches;
     

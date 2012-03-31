@@ -1370,10 +1370,6 @@ bool ofxPatch::saveSettings(string _configFile){
                     XML.popTag(); // pop "surface"
                 }
             }
-            
-            if (saved){
-                ofLog(OF_LOG_NOTICE, "The patch with ID " + ofToString(nId) + " have save it information" );
-            }
         }
     } else
         ofLog(OF_LOG_ERROR, "Couldn't save the patch ID " + ofToString(nId) + ", the file " + configFile + " was not found");
