@@ -152,9 +152,24 @@ void ofxComposer::closePatch( int &_nID ){
     if ( (_nID != -1) && (patches[_nID] != NULL) ){
         int targetTag = 0;
         
-        // Delete object from the vector 
+        // Delete links Dependences
         //
-        patches.erase(_nID);
+        for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+            for (int j = it->second->outPut.size()-1; j >= 0 ; j--){
+                if ( it->second->outPut[j].toId == _nID){
+                    it->second->outPut.erase( it->second->outPut.begin() + j );
+                    it->second->saveSettings();
+                }
+            }
+        }
+        
+        selectedID = -1;
+        
+        // Delete object from memory and then from vector 
+        //
+        ofxPatch * tmp = patches[_nID];
+        cout << patches.erase(_nID) << endl;
+        delete tmp;
         
         // Delete XML Data
         //
@@ -173,19 +188,6 @@ void ofxComposer::closePatch( int &_nID ){
             XML.removeTag("surface", targetTag);
             XML.saveFile();
         }
-        
-        // Delete links Dependences
-        //
-        for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
-            for (int j = it->second->outPut.size()-1; j >= 0 ; j--){
-                if ( it->second->outPut[j].toId == _nID){
-                    it->second->outPut.erase( it->second->outPut.begin() + j );
-                    it->second->saveSettings();
-                }
-            }
-        }
-        
-        selectedID = -1;
     }
 }
 
