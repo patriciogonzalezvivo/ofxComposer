@@ -163,13 +163,11 @@ void ofxComposer::closePatch( int &_nID ){
             }
         }
         
-        selectedID = -1;
-        
         // Delete object from memory and then from vector 
         //
-        ofxPatch * tmp = patches[_nID];
-        cout << patches.erase(_nID) << endl;
-        delete tmp;
+        selectedID = -1;
+        delete &patches[_nID];
+        patches.erase(_nID);
         
         // Delete XML Data
         //

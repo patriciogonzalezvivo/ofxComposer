@@ -166,6 +166,12 @@ ofTexture& ofxPatch::getTextureReference(){
         return getSrcTexture();
 }
 
+bool ofxPatch::isOver(ofPoint _pos){ 
+    ofRectangle biggerBox = textureCorners.getBoundingBox();
+    biggerBox.setFromCenter(biggerBox.getCenter().x, biggerBox.getCenter().y, biggerBox.width*1.2, biggerBox.height*1.2);
+    return textureCorners.inside(_pos); 
+};
+
 //---------------------------------------------------------------------- LOOPS
 void ofxPatch::update(){
     if ((width != getSrcTexture().getWidth()) ||

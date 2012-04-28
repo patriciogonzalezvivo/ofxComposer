@@ -67,7 +67,7 @@ public:
     void            update();
     void            draw();
     
-    bool            isOver(ofPoint _pos){ return textureCorners.inside(_pos); };
+    bool            isOver(ofPoint _pos);//{ return textureCorners.inside(_pos); };
     
     vector<LinkDot> outPut;
     vector<LinkDot> inPut;
