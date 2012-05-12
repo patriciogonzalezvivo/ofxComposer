@@ -1104,7 +1104,7 @@ bool ofxPatch::loadSettings( int _nTag, string _configFile){
             } else if( type == "ofxGLEditor" ){
                 title->setTitle(ofToString(nId) + ":" + type );
                 loaded = true;
-            } else if (( type == "ofImage") || ( type == "ofVideoPlayer")){
+            } else if (( type == "ofImage") || ( type == "ofTexture") || ( type == "ofVideoPlayer")){
                 loaded = loadFile( path );
             } else {
                 title->setTitle(ofToString(nId) + ":" + type );

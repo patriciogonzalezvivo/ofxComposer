@@ -8,6 +8,8 @@
 
 #include "ofxComposer.h"
 
+//  HELP screen -> F1
+//
 string helpScreen = "\n \
     | ofxComposer help\n \
     ---------------------------------------------------\n \
@@ -24,12 +26,17 @@ string helpScreen = "\n \
     - F7:   Turn ON/OFF the fullscreen-mode\n \
     \n \
     Mouse and Coorners: \n \
-    - Left Button Drag: coorner proportional scale \n \
+    - Left Button Drag:     coorner proportional scale \n \
     - Left Button Drag + R: Rotate Patch\n \
-    - Middle Button Drag or Right Button Drag + A: centered proportional scale\n \
-    - Right Button Drag: coorner transformation\n ";
+    - Middle Button Drag \n \
+            or \n \
+      Right Drag + A:       centered proportional scale\n \
+    - Right Button Drag:    coorner transformation\n ";
     
 ofxComposer::ofxComposer(){
+    
+    //  Event listeners
+    //
     ofAddListener(ofEvents().mouseMoved, this, &ofxComposer::_mouseMoved);
 	ofAddListener(ofEvents().mousePressed, this, &ofxComposer::_mousePressed);
 	ofAddListener(ofEvents().mouseReleased, this, &ofxComposer::_mouseReleased);
@@ -37,12 +44,16 @@ ofxComposer::ofxComposer(){
     ofAddListener(ofEvents().windowResized, this, &ofxComposer::_windowResized);
     
 #ifdef USE_OFXGLEDITOR
+    //  GLEditor fbo
+    //
     fbo.allocate(640, 480);
     fbo.begin();
     ofClear(0, 0);
     fbo.end();
 #endif
     
+    //  Default parameters
+    //
     configFile = "config.xml";
     selectedDot = -1;
     selectedID = -1;
@@ -259,7 +270,7 @@ void ofxComposer::draw(){
     
     if (bHelp){
         ofSetColor(255);
-        ofDrawBitmapString(helpScreen, 100,100);
+        ofDrawBitmapString(helpScreen, 20, ofGetWindowHeight()*0.5- 11.0*15.0);
     }
 }
 
@@ -270,6 +281,7 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
     } else if (e.key == OF_KEY_F2 ){
         bEditMode = !bEditMode;
     } else if ((e.key == OF_KEY_F3 ) || (e.key == OF_KEY_F4 ) || (e.key == OF_KEY_F5 ) || (e.key == OF_KEY_F6 ) ){
+        //  Special keys 
         //
     } else if (e.key == OF_KEY_F7){
         ofToggleFullscreen();
