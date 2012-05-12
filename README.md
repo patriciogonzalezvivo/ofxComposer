@@ -1,9 +1,9 @@
 # ofxComposer
 
 This idea came up with James George at Detroit´s oF DevCon 2012. It consist on a set of connecting boxes that let you load and processes different type of data on the GPU. 
-It´s designed to be flexible and visually minimalist for quick editing on life performances. But also very handy for graphically debugging, editing GLSL Shaders on the fly, and as a complement of ofxGui. 
+It´s designed to be flexible and visualy minimalist for quick editing on life performances. Also it's very handy for graphical debugging, editing GLSL Shaders on the fly, and as a `ofxGui` complement . 
 
-## Instalation
+## Installation
 
 Require:
 
@@ -54,12 +54,12 @@ The next button it´s for switching ON/OFF from the MaskMode.
 On MaskMode you can:
     
 - Add new masking points pressing over the line.
-- Del masking points pressing 'd' key
-- Clear the masking path pressing 'c'
+- Del masking points pressing 'x' key
+- Clear the masking path pressing 'r'
 
 The last button it´s a 'v' for making the patch visible or non-visible outside EditMode. 
 
-Pressing 'F3' key it´ll switch between EditMode and non-EditMode. So the patches that have the little 'v' on will be visible outside EditMode.
+Pressing 'F1' will show a help screen. Wile pressing 'F2' key will switch between EditMode and non-EditMode. So the patches that have the little 'v' on will be visible outside EditMode.
     
 Also you will notice that each patch have some dots at the sides  that are for connecting between them (left input´s / right output). For the moment the only patch that are able to receive texture information are the shaders ones.
 
