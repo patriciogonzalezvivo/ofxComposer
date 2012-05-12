@@ -8,6 +8,27 @@
 
 #include "ofxComposer.h"
 
+string helpScreen = "\n \
+    | ofxComposer help\n \
+    ---------------------------------------------------\n \
+    \n \
+    - F1:   Turn ON/OFF this help message\n \
+    - F2:   Surface Edit-Mode on/off\n \
+    - F3:   Masking-Mode ON/OFF (need Edit-Mode ) \n \
+    \n \
+            On mask mode on:\n \
+                            - x: delete mask path point\n \
+                            - r: reset mask path\n \
+    \n \
+    - F4:   Reset surface coorners\n \
+    - F7:   Turn ON/OFF the fullscreen-mode\n \
+    \n \
+    Mouse and Coorners: \n \
+    - Left Button Drag: coorner proportional scale \n \
+    - Left Button Drag + R: Rotate Patch\n \
+    - Middle Button Drag or Right Button Drag + A: centered proportional scale\n \
+    - Right Button Drag: coorner transformation\n ";
+    
 ofxComposer::ofxComposer(){
     ofAddListener(ofEvents().mouseMoved, this, &ofxComposer::_mouseMoved);
 	ofAddListener(ofEvents().mousePressed, this, &ofxComposer::_mousePressed);
@@ -25,7 +46,9 @@ ofxComposer::ofxComposer(){
     configFile = "config.xml";
     selectedDot = -1;
     selectedID = -1;
+    bEditMode = true;
     bGLEditor = false;
+    bHelp = false;
 }
 
 void ofxComposer::load(string _fileConfig){
@@ -233,21 +256,39 @@ void ofxComposer::draw(){
     ofPopMatrix();
     ofPopStyle();
     ofPopView();
+    
+    if (bHelp){
+        ofSetColor(255);
+        ofDrawBitmapString(helpScreen, 100,100);
+    }
 }
 
 //-------------------------------------------------------------- EVENTS
 void ofxComposer::_keyPressed(ofKeyEventArgs &e){
+    if (e.key == OF_KEY_F1 ){
+        bHelp = !bHelp;
+    } else if (e.key == OF_KEY_F2 ){
+        bEditMode = !bEditMode;
+    } else if ((e.key == OF_KEY_F3 ) || (e.key == OF_KEY_F4 ) || (e.key == OF_KEY_F5 ) || (e.key == OF_KEY_F6 ) ){
+        //
+    } else if (e.key == OF_KEY_F7){
+        ofToggleFullscreen();
+    } else {
+        //  If no special key was pressed and the GLEditor is present pass the key
+        //
 #ifdef USE_OFXGLEDITOR
-    if (bGLEditor)
-        editor.keyPressed(e.key);
-    
-    if (selectedID >= 0){
-        if (patches[selectedID]->getType() == "ofShader"){
-            patches[selectedID]->setFrag(editor.getText(1));
-            patches[selectedID]->saveSettings();
+        if (bGLEditor)
+            editor.keyPressed(e.key);
+        
+        if (selectedID >= 0){
+            if (patches[selectedID]->getType() == "ofShader"){
+                patches[selectedID]->setFrag(editor.getText(1));
+                patches[selectedID]->saveSettings();
+            }
         }
-    }
 #endif
+        
+    }
 }
 
 void ofxComposer::_mouseMoved(ofMouseEventArgs &e){

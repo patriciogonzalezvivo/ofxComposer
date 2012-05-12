@@ -842,17 +842,36 @@ void ofxPatch::_mouseReleased(ofMouseEventArgs &e){
 //Key Events
 void ofxPatch::_keyPressed(ofKeyEventArgs &e){
     
-    switch (e.key) {
-        case OF_KEY_F3:
-            bEditMode = !bEditMode;
-            break;
+    if (e.key == OF_KEY_F2){
+        bEditMode = !bEditMode;
+    } else if (e.key == OF_KEY_F3){
+        if ( bActive ){
+            bEditMask = !bEditMask;
+        }
+    } else if (e.key == OF_KEY_F4){
+        if ( bActive ){
+            if (type == "ofxGLEditor"){
+                textureCorners[0].set(0, height);
+                textureCorners[1].set(width, height);
+                textureCorners[2].set(width, 0);
+                textureCorners[3].set(0, 0);
+            } else {
+                textureCorners[0].set(0, 0);
+                textureCorners[1].set(width, 0);
+                textureCorners[2].set(width, height);
+                textureCorners[3].set(0, height);
+            }
+            
+            bUpdateCoord = true;
+            saveSettings();
+        }
     }
     
     if (bActive && bEditMode & bEditMask) {
         
         // Delete the selected mask point
         //
-        if ( (e.key == 'd') && 
+        if ( (e.key == 'x') && 
             (selectedMaskCorner >= 0) && 
             (selectedMaskCorner < maskCorners.size() ) ){
             maskCorners.getVertices().erase(maskCorners.getVertices().begin()+ selectedMaskCorner );
@@ -866,7 +885,7 @@ void ofxPatch::_keyPressed(ofKeyEventArgs &e){
         
         // Reset all the mask or the texture
         //
-        if ( (e.key == 'c') ){
+        if ( (e.key == 'r') ){
             maskCorners.clear();
             selectedMaskCorner = -1;
             maskCorners.addVertex(0.0,0.0);

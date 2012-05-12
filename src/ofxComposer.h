@@ -54,7 +54,7 @@ private:
     int     selectedDot;
     int     selectedID;
     
-    bool    bGLEditor;
+    bool    bEditMode, bGLEditor, bHelp;
 };
 
 
