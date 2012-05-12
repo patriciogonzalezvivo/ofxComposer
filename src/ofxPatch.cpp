@@ -168,8 +168,8 @@ ofTexture& ofxPatch::getTextureReference(){
 
 bool ofxPatch::isOver(ofPoint _pos){ 
     ofRectangle biggerBox = textureCorners.getBoundingBox();
-    biggerBox.setFromCenter(biggerBox.getCenter().x, biggerBox.getCenter().y, biggerBox.width*1.2, biggerBox.height*1.2);
-    //return textureCorners.inside(_pos);
+    biggerBox.setFromCenter(biggerBox.getCenter().x, biggerBox.getCenter().y, biggerBox.width+20, biggerBox.height+20);
+
     return biggerBox.inside(_pos);
 };
 

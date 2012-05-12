@@ -229,15 +229,19 @@ void ofxComposer::update(){
 #ifdef USE_OFXGLEDITOR
         if (patches[selectedID]->getType() == "ofShader"){
             editorBgColor.lerp(ofColor(0,150), 0.01);
-            editorFgColor.lerp(ofColor(255,255), 0.01);
+            editorFgColor.lerp(ofColor(255,255), 0.1);
         } else {
             editorBgColor.lerp(ofColor(0,0), 0.01);
             editorFgColor.lerp(ofColor(0,0), 0.05);
         }
         
+        
         editorFbo.begin();
+        //ofEnableAlphaBlending();
         ofClear(editorBgColor);
+        ofDisableBlendMode();
         ofRotate(180, 0, 1, 0);
+        ofSetColor(255,255);
         editor.draw();
         editorFbo.end();
 #endif
