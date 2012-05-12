@@ -304,7 +304,9 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
     } else if (e.key == OF_KEY_F7){
         ofToggleFullscreen();
         editor.reShape();
+        
         editorFbo.allocate(ofGetWindowWidth(),ofGetWindowHeight());
+        
         editorFbo.begin();
         ofClear(editorBgColor);
         editorFbo.end();
@@ -418,12 +420,10 @@ void ofxComposer::_mouseReleased(ofMouseEventArgs &e){
 
 void ofxComposer::_windowResized(ofResizeEventArgs &e){
 #ifdef USE_OFXGLEDITOR
-    //if (bGLEditor ){
-        editor.reShape();
-        editorFbo.allocate(e.width, e.height);
-        editorFbo.begin();
-        ofClear(editorBgColor);
-        editorFbo.end();
-    //}
+    editor.reShape();
+    editorFbo.allocate(e.width, e.height);
+    editorFbo.begin();
+    ofClear(editorBgColor);
+    editorFbo.end();
 #endif
 }
