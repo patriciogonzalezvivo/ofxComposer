@@ -43,13 +43,15 @@ ofxComposer::ofxComposer(){
 	ofAddListener(ofEvents().keyPressed, this, &ofxComposer::_keyPressed);
     ofAddListener(ofEvents().windowResized, this, &ofxComposer::_windowResized);
     
-#ifdef USE_OFXGLEDITOR
-    //  GLEditor fbo
-    //
-    fbo.allocate(640, 480);
-    fbo.begin();
-    ofClear(0, 0);
-    fbo.end();
+#ifdef USE_OFXGLEDITOR       
+    editor.setup("menlo.ttf");
+    editor.setCurrentEditor(1);
+    editorBgColor.set(0,0);
+    editorFgColor.set(0,0);
+    editorFbo.allocate(ofGetWindowWidth(), ofGetWindowHeight());
+    editorFbo.begin();
+    ofClear(editorBgColor);
+    editorFbo.end();
 #endif
     
     //  Default parameters
@@ -58,7 +60,7 @@ ofxComposer::ofxComposer(){
     selectedDot = -1;
     selectedID = -1;
     bEditMode = true;
-    bGLEditor = false;
+    bGLEditorPatch = false;
     bHelp = false;
 }
 
@@ -70,8 +72,12 @@ void ofxComposer::load(string _fileConfig){
     
     patches.clear();
     if (XML.loadFile(_fileConfig)){
-        int totalPatchs = XML.getNumTags("surface");
         
+#ifdef USE_OFXGLEDITOR       
+        editor.setup(XML.getValue("general:console:font", "menlo.ttf"));
+#endif
+        int totalPatchs = XML.getNumTags("surface");
+                
         // Load each surface present on the xml file
         //
         for(int i = 0; i < totalPatchs ; i++){
@@ -79,26 +85,16 @@ void ofxComposer::load(string _fileConfig){
             bool loaded = nPatch->loadSettings(i, "config.xml");
             
             if (loaded){
-#ifdef USE_OFXGLEDITOR
+
                 if (nPatch->getType() == "ofxGLEditor"){
                     ofLog(OF_LOG_NOTICE,"ofxComposer: ofxGLEditor loaded");
-                    editor.setup("menlo.ttf");
-                    editor.setCurrentEditor(1);
-                    fbo.allocate(ofGetWindowWidth(), ofGetWindowHeight());
-                    fbo.begin();
-                    ofClear(0, 150);
-                    fbo.end();
-                    
-                    nPatch->setTexture( fbo.getTextureReference(), 0);
-                    
-                    bGLEditor = true;
+                    nPatch->setTexture( editorFbo.getTextureReference(), 0);
+                    bGLEditorPatch = true;
                 }
-#endif
                 
                 if (nPatch->getType() == "input"){
-                    nPatch->setTexture( fbo.getTextureReference(), 0);
+                    nPatch->setTexture( editorFbo.getTextureReference(), 0);
                 }
-                
                 
                 // Listen to close bottom on the titleBar
                 //
@@ -228,6 +224,24 @@ void ofxComposer::update(){
     for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
         it->second->update();
     }
+    
+    if ( (selectedID >= 0)){
+#ifdef USE_OFXGLEDITOR
+        if (patches[selectedID]->getType() == "ofShader"){
+            editorBgColor.lerp(ofColor(0,150), 0.01);
+            editorFgColor.lerp(ofColor(255,255), 0.01);
+        } else {
+            editorBgColor.lerp(ofColor(0,0), 0.01);
+            editorFgColor.lerp(ofColor(0,0), 0.05);
+        }
+        
+        editorFbo.begin();
+        ofClear(editorBgColor);
+        ofRotate(180, 0, 1, 0);
+        editor.draw();
+        editorFbo.end();
+#endif
+    } 
 }
 
 
@@ -237,28 +251,35 @@ void ofxComposer::draw(){
     ofPushMatrix();
     
     ofEnableAlphaBlending();
+    
+    //  Draw the GLEditor if it«s not inside a Patch
+    //
+    if (!bGLEditorPatch){
+        ofPushMatrix();
+        ofRotate(180, 1, 0, 0);
+        ofTranslate(0, -ofGetWindowHeight());
+        ofSetColor(editorFgColor);
+        editorFbo.draw(0, 0);
+        ofPopMatrix();
+    }
+    
+    //  Draw Patches
+    //
     for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
         it->second->draw();
     }
     
-    if ( bGLEditor && (selectedID >= 0)){
-        if (patches[selectedID]->getType() == "ofShader"){
-#ifdef USE_OFXGLEDITOR
-            fbo.begin();
-            ofClear(0, 150);
-            ofRotate(180, 0, 1, 0);
-            editor.draw();
-            fbo.end();
-#endif
-        } else {
-            fbo.begin();
-            ofClear(0, 50);
-            fbo.end();    
-        }
-    } 
-    
+    //  Draw active line
+    //
     if (selectedDot >= 0){
         ofLine(patches[selectedDot]->getOutPutPosition(), ofPoint(ofGetMouseX(),ofGetMouseY()));
+    }
+    
+    //  Draw Help screen
+    //
+    if (bHelp){
+        ofSetColor(255);
+        ofDrawBitmapString(helpScreen, 20, ofGetWindowHeight()*0.5- 11.0*15.0);
     }
     
     ofDisableBlendMode();
@@ -268,10 +289,7 @@ void ofxComposer::draw(){
     ofPopStyle();
     ofPopView();
     
-    if (bHelp){
-        ofSetColor(255);
-        ofDrawBitmapString(helpScreen, 20, ofGetWindowHeight()*0.5- 11.0*15.0);
-    }
+    
 }
 
 //-------------------------------------------------------------- EVENTS
@@ -285,11 +303,16 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
         //
     } else if (e.key == OF_KEY_F7){
         ofToggleFullscreen();
+        editor.reShape();
+        editorFbo.allocate(ofGetWindowWidth(),ofGetWindowHeight());
+        editorFbo.begin();
+        ofClear(editorBgColor);
+        editorFbo.end();
     } else {
         //  If no special key was pressed and the GLEditor is present pass the key
         //
 #ifdef USE_OFXGLEDITOR
-        if (bGLEditor)
+        //if (bGLEditor)
             editor.keyPressed(e.key);
         
         if (selectedID >= 0){
@@ -344,7 +367,8 @@ void ofxComposer::_mousePressed(ofMouseEventArgs &e){
             if ((it->second->bActive) && (it->second->bEditMode) && !(it->second->bEditMask)){
                 selectedID = it->first;
 #ifdef USE_OFXGLEDITOR
-                if (bGLEditor && (it->second->getType() == "ofShader")){
+                //if (bGLEditorPatch
+                if ((it->second->getType() == "ofShader")){ 
                     editor.setText(it->second->getFrag(), 1);
                 }
 #endif
@@ -394,12 +418,12 @@ void ofxComposer::_mouseReleased(ofMouseEventArgs &e){
 
 void ofxComposer::_windowResized(ofResizeEventArgs &e){
 #ifdef USE_OFXGLEDITOR
-    if (bGLEditor ){
+    //if (bGLEditor ){
         editor.reShape();
-        fbo.allocate(e.width, e.height);
-        fbo.begin();
-        ofClear(0, 150);
-        fbo.end();
-    }
+        editorFbo.allocate(e.width, e.height);
+        editorFbo.begin();
+        ofClear(editorBgColor);
+        editorFbo.end();
+    //}
 #endif
 }

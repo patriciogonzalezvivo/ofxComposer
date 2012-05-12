@@ -44,8 +44,11 @@ private:
 
 #ifdef USE_OFXGLEDITOR
 	ofxGLEditor editor;
+    ofFbo       editorFbo;
+    ofColor     editorBgColor;
+    ofColor     editorFgColor;
 #endif
-    ofFbo       fbo;
+    
     
     map<int,ofxPatch*>  patches;
     
@@ -54,7 +57,7 @@ private:
     int     selectedDot;
     int     selectedID;
     
-    bool    bEditMode, bGLEditor, bHelp;
+    bool    bEditMode, bGLEditorPatch, bHelp;
 };
 
 
