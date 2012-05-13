@@ -1107,18 +1107,7 @@ bool ofxPatch::loadType(string _type, string _configFile){
         
         shader  = new ofxShaderObj();
         shader->allocate(width,height);
-        loaded  = shader->setFragmentShader("uniform sampler2DRect tex0;\n\
-uniform sampler2DRect backbuffer;\n\
-uniform vec2 resolution;\n\
-uniform vec2 mouse;\n\
-uniform float time;\n\
-\n\
-void main(){\n\
-    vec2 st = gl_FragCoord.xy;\n\
-    vec4 color = texture2DRect(tex0, st);\n\
-    gl_FragColor = vec4(color.rgb,1.0);\n\
-}");
-        
+        loaded = true;
         inPut.clear();
         for ( int i = 0; i < shader->getNumberOfTextures();  i++){
             LinkDot p;

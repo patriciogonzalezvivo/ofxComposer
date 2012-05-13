@@ -82,7 +82,7 @@ protected:
     ofFbo       *textures;
     ofShader    shader;
     string      fragmentShader, vertexShader;
-    float       width, height, time;
+    float       width, height;//, time;
     int         nTextures, passes, internalFormat;
     bool        bFine;
 };

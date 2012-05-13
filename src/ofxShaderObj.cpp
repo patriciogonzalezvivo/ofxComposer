@@ -51,30 +51,35 @@ ofxShaderObj::ofxShaderObj():nTextures(0){
     // - tex0, tex1, tex2, ... : this are dynamicaly defined and allocated and can be
     //   filled with information by using .begin(0) and .end(0), or .begin(1) and .end(1), etc 
     //
-    // This dafault shader it´s timer made of a mix on Ricardo Caballero´s webGL Sandbox
+    // This dafault shader it's timer made of a mix on Ricardo Caballero's webGL Sandbox
     // http://mrdoob.com/projects/glsl_sandbox/
     //
     
     fragmentShader = "\n\
+// \n\
+// Empty Shader Patch for ofxComposer \n\
+// by http://PatricioGonzalezVivo.com \n\
+//\n\
+// For quick GLSL prototyping this Patch have the next native variables\n\
+//\n\
+uniform sampler2DRect backbuffer;  // Previus frameBuffer \n\
+uniform sampler2DRect tex0;        // Input texture number 0 \n\
+                                   // You can add as many as you want\n\
+                                   // just type name them 'tex'+ N\n\
 \n\
-\n\
-uniform float time;\n\
-uniform vec2 mouse;\n\
-uniform vec2 resolution;\n\
-\n\
-uniform sampler2DRect backbuffer;\n\
-\n\
-uniform sampler2DRect tex0;\n\
-uniform vec2 size0;\n\
+uniform vec2  size0;               // tex0 resolution\n\
+uniform vec2  resolution;          // Patch resolution\n\
+uniform vec2  window;              // Window resolution\n\
+uniform vec2  screen;              // Screen resolution\n\
+uniform vec2  mouse;               // Mouse position on the screen\n\
+uniform float time;                // seconds \n\
 \n\
 void main( void ){\n\
-    vec2 st = (gl_FragCoord.xy / resolution.xy);\n\
-    \n\
+    vec2 st = gl_TexCoord[0].st;    // gl_FragCoord.st;\n\
     vec4 color = texture2DRect(tex0, st);\n\
     \n\
-    gl_FragColor = vec4( color.r, color.g, color.b, color.a );\n\
-}\n\
-\n";
+    gl_FragColor = vec4( color.rgb, color.a );\n\
+}\n";
     
     vertexShader = "void main(){\n\
 \n\
@@ -182,8 +187,8 @@ void ofxShaderObj::update(){
         for( int i = 0; i < nTextures; i++){
             string texName = "tex" + ofToString(i); 
             shader.setUniformTexture(texName.c_str(), textures[i].getTextureReference(), i+1 );
-            //string texRes = "size" + ofToString(i); 
-            //shader.setUniform2f(texRes.c_str() , (float)textures[i].getWidth(), (float)textures[i].getHeight());
+            string texRes = "size" + ofToString(i); 
+            shader.setUniform2f(texRes.c_str() , (float)textures[i].getWidth(), (float)textures[i].getHeight());
         }
         
         // Also there are some standar variables that are passes to the shaders
@@ -191,10 +196,11 @@ void ofxShaderObj::update(){
         // http://mrdoob.com/projects/glsl_sandbox/ and ShaderToy by Inigo Quilez http://www.iquilezles.org/apps/shadertoy/
         // webGL interactive GLSL editors
         //
-        shader.setUniform1f("time", (float)time );
-        //shader.setUniform2f("size", (float)width, (float)height);
         shader.setUniform2f("resolution", (float)width, (float)height);
-        shader.setUniform2f("mouse", (float)(ofGetMouseX()/width), (float)(ofGetMouseY()/height));
+        shader.setUniform2f("window", (float)ofGetWindowWidth(), (float)ofGetWindowHeight());
+        shader.setUniform2f("screen", (float)ofGetScreenWidth(), (float)ofGetScreenHeight());
+        shader.setUniform2f("mouse", (float)ofGetMouseX(), (float)ofGetMouseY());
+        shader.setUniform1f("time", (float)ofGetElapsedTimef() );
         
         // doFrame() it´s a built-in funtion of ofxShaderObj that only draw a white box in order to 
         // funtion as a frame here the textures could rest.
@@ -205,13 +211,13 @@ void ofxShaderObj::update(){
         
         pingPong.dst->end();
         
-        pingPong.swap();    // Swap the ofFbo´s. Now dst it´s src and src it´s dst
+        pingPong.swap();    // Swap the ofFbo's. Now dst it's src and src its dst
     }
     
     pingPong.swap();        // After the loop the render information will be at the src ofFbo of the ofxSwapBuffer 
                             // this extra swap() call will put it on the dst one. Witch sounds more reasonable... isn´t?
     
-    time += 1.0/ofGetFrameRate();   // here it´s where the time it´s updated.
+    //time += 1.0/ofGetFrameRate();   // here it´s where the time it´s updated.
 };
 
 
