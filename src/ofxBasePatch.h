@@ -9,27 +9,8 @@
 #ifndef OFXBASEPATCH
 #define OFXBASEPATCH
 
-#include "ofMain.h"
-
 #include "ofxXmlSettings.h"
-
 #include "ofxTitleBar.h"
-#include "ofxShaderObj.h"
-#include "ofxPingPong.h"
-
-struct LinkDot{
-    LinkDot(){
-        to = NULL;
-        toShader = NULL;
-        nTex = 0;
-    }
-    
-    ofPoint     pos;
-    LinkDot     *to;
-    int         nTex;
-    int         toId;
-    ofxShaderObj *toShader;
-};
 
 class ofxBasePatch{
 public:
@@ -37,16 +18,23 @@ public:
     ofxBasePatch();
     ~ofxBasePatch();
     
+    bool            loadSettings(ofxXmlSettings &_XML);
+    bool            saveSettings(string _configFile = "none");
+    
+    void            setMask(ofPolyline& _polyLine){ maskCorners = _polyLine; bMasking = true; bUpdateMask = true; };
+    void            setCoorners(ofPoint _coorners[4]);
+    void            setTexture(ofTexture& tex, int _texNum = 0);
+    
     int             getId() const { return nId; };
     ofPoint         getPos() const { return ofPoint(x,y); };
-    string          getType() const { return type; };
+    string          getType() const { return (shader != NULL)? "ofShader" : type; };
     
     ofPoint         getSurfaceToScreen(ofPoint _pos){ return surfaceToScreenMatrix * _pos; };
     ofPoint         getScreenToSurface(ofPoint _pos){ return screenToSurfaceMatrix * _pos; };
     GLfloat*        getGlMatrix() { return glMatrix; };
-    
-    virtual ofTexture&      getTextureReference();
-    
+
+    ofTexture&      getTextureReference();
+    ofxShaderObj*   getShader(){ if (getType() == "ofShader") return shader; else return NULL; };
     ofPoint&        getOutPutPosition(){ return outPutPos; };
     
     void            move(ofPoint _pos);
@@ -56,7 +44,7 @@ public:
     void            update();
     void            draw();
     
-    bool            isOver(ofPoint _pos);
+    bool            isOver(ofPoint _pos);//{ return textureCorners.inside(_pos); };
     
     vector<LinkDot> outPut;
     vector<LinkDot> inPut;
@@ -80,6 +68,17 @@ private:
     void            _mouseReleased(ofMouseEventArgs &e);
     void            _keyPressed(ofKeyEventArgs &e); 
     void            _reMakeFrame( int &_nId );
+    
+    
+    // 5 Sources Objects and one interface to rule them all
+    //
+    ofTexture&      getSrcTexture();
+    
+    ofImage         *image;
+    ofVideoPlayer   *videoPlayer;
+    ofVideoGrabber  *videoGrabber;
+    ofxShaderObj    *shader;
+    ofTexture       *texture;
     
     // Mask variables
     //
