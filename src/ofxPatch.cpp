@@ -35,6 +35,8 @@ ofxPatch::ofxPatch(){
     
     width       = 640;
     height      = 480;
+    texOpacity  = 1.0;
+    maskOpacity = 1.0;
     
     string shaderProgram = "#version 120\n\
 #extension GL_ARB_texture_rectangle : enable\n\
@@ -56,6 +58,8 @@ void main (void){\n\
     maskShader.linkProgram();
     maskFbo.allocate(width, height);
     
+    color.set(200,255);
+    
     maskCorners.addVertex(0.0,0.0);
     maskCorners.addVertex(1.0,0.0);
     maskCorners.addVertex(1.0,1.0);
@@ -75,6 +79,7 @@ void main (void){\n\
 	ofAddListener(ofEvents().mouseDragged, this, &ofxPatch::_mouseDragged);
 	ofAddListener(ofEvents().mouseReleased, this, &ofxPatch::_mouseReleased);
 	ofAddListener(ofEvents().keyPressed, this, &ofxPatch::_keyPressed);
+    
 };
 
 ofxPatch::~ofxPatch(){
@@ -212,18 +217,18 @@ void ofxPatch::update(){
     }
     
     if (bMasking){
-        float texOpacity = 0.0;
-        float maskOpacity = 0.0;
+        //  Masking it«s no allways set. Because it takes some GPU speed off it«s only activated when user edit it.
+        //
         
         if ( textureCorners.inside(ofGetMouseX(), ofGetMouseY()) && (bEditMode)){
-            texOpacity = 1.0;
-            maskOpacity = 0.5;
+            texOpacity = ofLerp(texOpacity,1.0, 0.01);
+            maskOpacity = ofLerp(maskOpacity,0.8, 0.01);
         } else if (!bEditMode){
-            texOpacity = 1.0;
-            maskOpacity = 0.0;
+            texOpacity = ofLerp(texOpacity, 1.0, 0.01);
+            maskOpacity = ofLerp(maskOpacity, 0.0, 0.01);
         } else {
-            texOpacity = 0.8;
-            maskOpacity = 0.0;
+            texOpacity = ofLerp(texOpacity, 0.8, 0.01);
+            maskOpacity = ofLerp(maskOpacity, 0.0, 0.01);
         }
     
         maskFbo.dst->begin();
@@ -279,12 +284,14 @@ void ofxPatch::draw(){
     if ( bEditMode || bVisible ) {
         
         if (bActive || !bEditMode)
-            ofSetColor(255, 255);
+            color.lerp(ofColor(255), 0.1);
         else
-            ofSetColor(200, 255);
+            color.lerp(ofColor(150), 0.1);
+        
         
         ofPushMatrix();
         glMultMatrixf(glMatrix);
+        ofSetColor(color);
         getTextureReference().draw(0,0);
         ofPopMatrix();
     }
@@ -301,7 +308,7 @@ void ofxPatch::draw(){
             //
             for(int i = 0; i < 4; i++){
                 if ( ( selectedTextureCorner == i) || ( ofDist(ofGetMouseX(), ofGetMouseY(), textureCorners[i].x, textureCorners[i].y) <= 4 ) ) ofSetColor(200,255);
-                else ofSetColor(200,100);
+                else ofSetColor(color,100);
                 
                 ofRect(textureCorners[i].x-4,textureCorners[i].y-4, 8,8);
                 
@@ -390,6 +397,8 @@ void ofxPatch::move(ofPoint _pos){
     for(int i = 0; i < 4; i++){
         textureCorners[i] += diff;
     }
+    
+    //setFromCenter(getPos().x, getPos().y, width, height);
     
     bUpdateCoord = true;
 }
@@ -654,16 +663,21 @@ void ofxPatch::doGaussianElimination(float *input, int n){
 
 // -------------------------------------------------------------------- EVENTS
 void ofxPatch::_reMakeFrame( int &_nId ){
+    float offSet = 0;
+    
+    if (title != NULL)
+        offSet = 15;
+    
     if (type == "ofxGLEditor"){
-        textureCorners[0].set(0, height);
-        textureCorners[1].set(width, height);
-        textureCorners[2].set(width, 0);
-        textureCorners[3].set(0, 0);
+        textureCorners[0].set(0.0, height + offSet);
+        textureCorners[1].set(width, height + offSet);
+        textureCorners[2].set(width, offSet);
+        textureCorners[3].set(0.0, offSet);
     } else {
-        textureCorners[0].set(0, 0);
-        textureCorners[1].set(width, 0);
-        textureCorners[2].set(width, height);
-        textureCorners[3].set(0, height);
+        textureCorners[0].set(0.0, offSet);
+        textureCorners[1].set(width, offSet);
+        textureCorners[2].set(width, height + offSet);
+        textureCorners[3].set(0.0, height + offSet);
     }
     
     bUpdateCoord = true;
@@ -851,20 +865,8 @@ void ofxPatch::_keyPressed(ofKeyEventArgs &e){
         }
     } else if (e.key == OF_KEY_F4){
         if ( bActive ){
-            if (type == "ofxGLEditor"){
-                textureCorners[0].set(0, height);
-                textureCorners[1].set(width, height);
-                textureCorners[2].set(width, 0);
-                textureCorners[3].set(0, 0);
-            } else {
-                textureCorners[0].set(0, 0);
-                textureCorners[1].set(width, 0);
-                textureCorners[2].set(width, height);
-                textureCorners[3].set(0, height);
-            }
-            
-            bUpdateCoord = true;
-            saveSettings();
+            int i = 0;
+            _reMakeFrame(i);
         }
     }
     
@@ -1021,10 +1023,9 @@ bool ofxPatch::loadFile(string _filePath, string _configFile){
         ofLog(OF_LOG_ERROR, "ofxComposer: ofxPatch: can«t load file " + filePath + " Extention " + ext + " not know" );
     
     if ( loaded ){
-        textureCorners[0].set(0, 0);
-        textureCorners[1].set(width, 0);
-        textureCorners[2].set(width, height);
-        textureCorners[3].set(0, height);
+        
+        int i = 0;
+        _reMakeFrame(i);
         
         title->setTitle( file.getFileName() );
         

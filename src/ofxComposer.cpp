@@ -182,6 +182,9 @@ void ofxComposer::closePatch( int &_nID ){
     if ( (_nID != -1) && (patches[_nID] != NULL) ){
         int targetTag = 0;
         
+        if (patches[_nID]->getType() == "ofxGLEditor")
+            bGLEditorPatch = false;
+        
         // Delete links Dependences
         //
         for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
@@ -302,9 +305,11 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
         bHelp = !bHelp;
     } else if (e.key == OF_KEY_F2 ){
         bEditMode = !bEditMode;
-    } else if ((e.key == OF_KEY_F3 ) || (e.key == OF_KEY_F4 ) || (e.key == OF_KEY_F5 ) || (e.key == OF_KEY_F6 ) ){
-        //  Special keys 
+    } else if ((e.key == OF_KEY_F3 ) || (e.key == OF_KEY_F4 ) ){
+        //  Special keys reserved for Patch Events
         //
+    } else if ((e.key == OF_KEY_F5 ) || (e.key == OF_KEY_F6 ) ){
+        
     } else if (e.key == OF_KEY_F7){
         ofToggleFullscreen();
         editor.reShape();

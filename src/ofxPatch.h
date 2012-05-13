@@ -124,11 +124,13 @@ private:
     // General Variables
     //
     ofRectangle     box;
+    ofColor         color;
     ofPoint         outPutPos;
     string          configFile;
     string          filePath;
     string          type;
     float           x, y;
+    float           texOpacity, maskOpacity;
     int             width, height;
     int             nId;
     
