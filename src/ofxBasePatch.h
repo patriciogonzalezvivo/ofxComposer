@@ -18,8 +18,8 @@ public:
     ofxBasePatch();
     ~ofxBasePatch();
     
-    bool            loadSettings(ofxXmlSettings &_XML);
-    bool            saveSettings(string _configFile = "none");
+    bool            loadXmlSettings(ofxXmlSettings &_XML);
+    bool            saveXmlSettings(ofxXmlSettings &_XML);
     
     void            setMask(ofPolyline& _polyLine){ maskCorners = _polyLine; bMasking = true; bUpdateMask = true; };
     void            setCoorners(ofPoint _coorners[4]);
@@ -80,12 +80,7 @@ private:
     ofxShaderObj    *shader;
     ofTexture       *texture;
     
-    // Mask variables
-    //
-    ofxPingPong     maskFbo;
-    ofShader        maskShader;
-    ofPolyline      maskCorners;
-	int             selectedMaskCorner;
+   
     
     // Texture varialbes
     //

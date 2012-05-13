@@ -10,12 +10,19 @@
 #define OFXBASEMASK
 
 #include "ofxXmlSettings.h"
-#include "ofxTitleBar.h"
 
-class ofxBaseMask{
+class ofxBaseMask : public ofPolyline {
 public:
     ofxBaseMask();
     
+    bool            loadXmlSettings(ofxXmlSettings &_XML);
+    bool            saveXmlSettings(ofxXmlSettings &_XML);
+    
+    // Mask variables
+    //
+    ofxPingPong     maskFbo;
+    ofShader        maskShader;
+	int             selectedMaskCorner;
 };
 
 
