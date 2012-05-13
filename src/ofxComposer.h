@@ -23,7 +23,8 @@ public:
     ofxComposer();
     
     void    load(string _fileConfig = "default");
-    bool    addPatch(string _filePath, ofPoint _position);
+    bool    addPatchFromFile(string _filePath, ofPoint _position);
+    bool    addPatchWithOutFile(string _type, ofPoint _position);
     
     ofxPatch* operator[](int _nID){ if ( (_nID != -1) && (patches[_nID] != NULL) ) return patches[_nID]; };
     

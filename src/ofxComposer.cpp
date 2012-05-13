@@ -23,6 +23,8 @@ string helpScreen = "\n \
                             - r: reset mask path\n \
     \n \
     - F4:   Reset surface coorners\n \
+    - F5:   Add ofxGLEditor (temporal!!!)\n \
+    - F6:   Add ofVideoGrabber (temporal!!!)\n \
     - F7:   Turn ON/OFF the fullscreen-mode\n \
     \n \
     Mouse and Coorners: \n \
@@ -91,10 +93,10 @@ void ofxComposer::load(string _fileConfig){
                     nPatch->setTexture( editorFbo.getTextureReference(), 0);
                     bGLEditorPatch = true;
                 }
-                
+                /*
                 if (nPatch->getType() == "input"){
                     nPatch->setTexture( editorFbo.getTextureReference(), 0);
-                }
+                }*/
                 
                 // Listen to close bottom on the titleBar
                 //
@@ -138,7 +140,7 @@ void ofxComposer::load(string _fileConfig){
     }
 }
 
-bool ofxComposer::addPatch(string _filePath, ofPoint _position){
+bool ofxComposer::addPatchFromFile(string _filePath, ofPoint _position){
     bool loaded = false;
     
     ofxPatch *nPatch = new ofxPatch();
@@ -149,6 +151,28 @@ bool ofxComposer::addPatch(string _filePath, ofPoint _position){
         nPatch->scale(0.5);
         nPatch->saveSettings();
         ofAddListener( nPatch->title->close , this, &ofxComposer::closePatch);
+        patches[nPatch->getId()] = nPatch;
+    }
+    
+    return loaded;
+}
+
+bool ofxComposer::addPatchWithOutFile(string _type, ofPoint _position){
+    bool loaded = false;
+    
+    ofxPatch *nPatch = new ofxPatch();
+    loaded = nPatch->loadType( _type, "config.xml" );
+    
+    if ( loaded ){
+        nPatch->move( _position );
+        nPatch->scale(0.5);
+        nPatch->saveSettings();
+        ofAddListener( nPatch->title->close , this, &ofxComposer::closePatch);
+        
+        if (nPatch->getType() == "ofxGLEditor"){
+            nPatch->setTexture( editorFbo.getTextureReference(), 0);
+        }
+        
         patches[nPatch->getId()] = nPatch;
     }
     
@@ -307,8 +331,10 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
     } else if ((e.key == OF_KEY_F3 ) || (e.key == OF_KEY_F4 ) ){
         //  Special keys reserved for Patch Events
         //
-    } else if ((e.key == OF_KEY_F5 ) || (e.key == OF_KEY_F6 ) ){
-        
+    } else if (e.key == OF_KEY_F5 ){
+        bGLEditorPatch = addPatchWithOutFile("ofxGLEditor", ofPoint(ofGetMouseX(),ofGetMouseY()));
+    } else if ( e.key == OF_KEY_F6 ){
+        addPatchWithOutFile("ofVideoGrabber", ofPoint(ofGetMouseX(),ofGetMouseY()));
     } else if (e.key == OF_KEY_F7){
         ofToggleFullscreen();
         editor.reShape();

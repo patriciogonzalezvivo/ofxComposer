@@ -38,7 +38,8 @@ public:
     ~ofxPatch();
 
     bool            loadFile(string _filePath, string _configFile = "none");
-        
+    bool            loadType(string _type, string _configFile = "none");
+    
     bool            loadSettings(int _nTag, string _configFile = "none");
     bool            saveSettings(string _configFile = "none");
 

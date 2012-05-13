@@ -283,7 +283,7 @@ void ofxPatch::draw(){
     
     if ( bEditMode || bVisible ) {
         
-        if (bActive || !bEditMode)
+        if (bActive || !bEditMode || (type == "ofxGLEditor"))
             color.lerp(ofColor(255,255), 0.1);
         else
             color.lerp(ofColor(200,200), 0.1);
@@ -1056,6 +1056,71 @@ bool ofxPatch::loadFile(string _filePath, string _configFile){
         }
         
         title->setTitle( file.getFileName() );
+        
+        bUpdateMask = true;
+        bUpdateCoord = true;
+    }
+    
+    return loaded;
+}
+
+bool ofxPatch::loadType(string _type, string _configFile){ 
+    bool loaded = false;
+    
+    if (_configFile != "none")
+        configFile = _configFile;
+    
+    // Load General setup variables
+    //
+    ofxXmlSettings XML;
+    if (XML.loadFile(configFile)){
+        if (XML.getValue("general:fullscreen", false ) == true){
+            width = ofGetScreenWidth();
+            height = ofGetScreenHeight();
+        } else {
+            width = XML.getValue("general:width", 640 );
+            height = XML.getValue("general:height", 480 );
+        }
+    }
+    
+    if ( _type == "ofxGLEditor"){
+        type = _type;
+        title->setTitle( type );
+        loaded = true;
+    } else if ( _type == "ofVideoGrabber"){
+        type = _type;
+        videoGrabber = new ofVideoGrabber();
+        videoGrabber->setDeviceID( 0 );
+        
+        title->setTitle(ofToString(nId) + ":" + type );
+        loaded = videoGrabber->initGrabber(width, height);
+        
+        if (loaded){
+            width = videoGrabber->getWidth();
+            height = videoGrabber->getHeight();
+        }
+    } 
+    
+    if ( loaded ){
+        
+        float offSet = 0.0;
+        
+        if (title != NULL)
+            offSet = 15;
+        
+        if (type == "ofxGLEditor"){
+            textureCorners[0].set(0.0, height + offSet);
+            textureCorners[1].set(width, height + offSet);
+            textureCorners[2].set(width, offSet);
+            textureCorners[3].set(0.0, offSet);
+        } else {
+            textureCorners[0].set(0.0, offSet);
+            textureCorners[1].set(width, offSet);
+            textureCorners[2].set(width, height + offSet);
+            textureCorners[3].set(0.0, height + offSet);
+        }
+        
+        title->setTitle( type );
         
         bUpdateMask = true;
         bUpdateCoord = true;
