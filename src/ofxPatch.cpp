@@ -204,7 +204,7 @@ void ofxPatch::update(){
         // Generate masking contour
         //
         maskFbo.src->begin();
-        ofClear(0,255);
+        ofClear(0,0);
         ofBeginShape();
         ofSetColor(255, 255, 255);
         for(int i = 0; i < maskCorners.size(); i++ ){
@@ -284,9 +284,9 @@ void ofxPatch::draw(){
     if ( bEditMode || bVisible ) {
         
         if (bActive || !bEditMode)
-            color.lerp(ofColor(255), 0.1);
+            color.lerp(ofColor(255,255), 0.1);
         else
-            color.lerp(ofColor(150), 0.1);
+            color.lerp(ofColor(200,200), 0.1);
         
         
         ofPushMatrix();
@@ -663,7 +663,7 @@ void ofxPatch::doGaussianElimination(float *input, int n){
 
 // -------------------------------------------------------------------- EVENTS
 void ofxPatch::_reMakeFrame( int &_nId ){
-    float offSet = 0;
+    float offSet = 0.0;
     
     if (title != NULL)
         offSet = 15;
@@ -865,8 +865,22 @@ void ofxPatch::_keyPressed(ofKeyEventArgs &e){
         }
     } else if (e.key == OF_KEY_F4){
         if ( bActive ){
-            int i = 0;
-            _reMakeFrame(i);
+            float offSet = 0.0;
+            
+            if (title != NULL)
+                offSet = 15;
+            
+            if (type == "ofxGLEditor"){
+                textureCorners[0].set(0.0, height + offSet);
+                textureCorners[1].set(width, height + offSet);
+                textureCorners[2].set(width, offSet);
+                textureCorners[3].set(0.0, offSet);
+            } else {
+                textureCorners[0].set(0.0, offSet);
+                textureCorners[1].set(width, offSet);
+                textureCorners[2].set(width, height + offSet);
+                textureCorners[3].set(0.0, height + offSet);
+            }
         }
     }
     
@@ -1024,8 +1038,22 @@ bool ofxPatch::loadFile(string _filePath, string _configFile){
     
     if ( loaded ){
         
-        int i = 0;
-        _reMakeFrame(i);
+        float offSet = 0.0;
+        
+        if (title != NULL)
+            offSet = 15;
+        
+        if (type == "ofxGLEditor"){
+            textureCorners[0].set(0.0, height + offSet);
+            textureCorners[1].set(width, height + offSet);
+            textureCorners[2].set(width, offSet);
+            textureCorners[3].set(0.0, offSet);
+        } else {
+            textureCorners[0].set(0.0, offSet);
+            textureCorners[1].set(width, offSet);
+            textureCorners[2].set(width, height + offSet);
+            textureCorners[3].set(0.0, height + offSet);
+        }
         
         title->setTitle( file.getFileName() );
         

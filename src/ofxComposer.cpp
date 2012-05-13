@@ -228,7 +228,7 @@ void ofxComposer::update(){
         it->second->update();
     }
     
-    if ( (selectedID >= 0)){
+    if ( (bEditMode) && (selectedID >= 0)){
 #ifdef USE_OFXGLEDITOR
         if (patches[selectedID]->getType() == "ofShader"){
             editorBgColor.lerp(ofColor(0,150), 0.01);
@@ -237,7 +237,6 @@ void ofxComposer::update(){
             editorBgColor.lerp(ofColor(0,0), 0.01);
             editorFgColor.lerp(ofColor(0,0), 0.05);
         }
-        
         
         editorFbo.begin();
         //ofEnableAlphaBlending();
@@ -261,7 +260,7 @@ void ofxComposer::draw(){
     
     //  Draw the GLEditor if it«s not inside a Patch
     //
-    if (!bGLEditorPatch){
+    if (bEditMode && !bGLEditorPatch){
         ofPushMatrix();
         ofRotate(180, 1, 0, 0);
         ofTranslate(0, -ofGetWindowHeight());
@@ -323,8 +322,7 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
         //  If no special key was pressed and the GLEditor is present pass the key
         //
 #ifdef USE_OFXGLEDITOR
-        //if (bGLEditor)
-            editor.keyPressed(e.key);
+        editor.keyPressed(e.key);
         
         if (selectedID >= 0){
             if (patches[selectedID]->getType() == "ofShader"){

@@ -130,8 +130,8 @@ private:
     string          filePath;
     string          type;
     float           x, y;
+    float           width, height;
     float           texOpacity, maskOpacity;
-    int             width, height;
     int             nId;
     
     bool            bMasking;
