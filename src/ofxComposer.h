@@ -6,14 +6,15 @@
 //  Copyright (c) 2012 http://www.PatricioGonzalezVivo.com All rights reserved.
 //
 
-#define USE_OFXGLEDITOR
-
 #ifndef OFXCOMPOSER
 #define OFXCOMPOSER
 
 #include "ofMain.h"
 #include "ofxPatch.h"
 
+//  Comment the "define USE_OFXGLEDITOR" if you don't want to use ofxGLEditor
+//
+#define USE_OFXGLEDITOR
 #ifdef USE_OFXGLEDITOR
 #include "ofxGLEditor.h"
 #endif

@@ -88,16 +88,13 @@ void ofxComposer::load(string _fileConfig){
             
             if (loaded){
 
+#ifdef USE_OFXGLEDITOR
                 if (nPatch->getType() == "ofxGLEditor"){
                     ofLog(OF_LOG_NOTICE,"ofxComposer: ofxGLEditor loaded");
                     nPatch->setTexture( editorFbo.getTextureReference(), 0);
                     bGLEditorPatch = true;
                 }
-                /*
-                if (nPatch->getType() == "input"){
-                    nPatch->setTexture( editorFbo.getTextureReference(), 0);
-                }*/
-                
+#endif
                 // Listen to close bottom on the titleBar
                 //
                 ofAddListener( nPatch->title->close , this, &ofxComposer::closePatch);
@@ -168,10 +165,11 @@ bool ofxComposer::addPatchWithOutFile(string _type, ofPoint _position){
         nPatch->scale(0.5);
         nPatch->saveSettings();
         ofAddListener( nPatch->title->close , this, &ofxComposer::closePatch);
-        
+#ifdef USE_OFXGLEDITOR
         if (nPatch->getType() == "ofxGLEditor"){
             nPatch->setTexture( editorFbo.getTextureReference(), 0);
         }
+#endif
         
         patches[nPatch->getId()] = nPatch;
     }
@@ -282,6 +280,7 @@ void ofxComposer::draw(){
     
     ofEnableAlphaBlending();
     
+#ifdef USE_OFXGLEDITOR
     //  Draw the GLEditor if it«s not inside a Patch
     //
     if (bEditMode && !bGLEditorPatch){
@@ -292,6 +291,7 @@ void ofxComposer::draw(){
         editorFbo.draw(0, 0);
         ofPopMatrix();
     }
+#endif
     
     //  Draw Patches
     //
@@ -337,13 +337,14 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
         addPatchWithOutFile("ofVideoGrabber", ofPoint(ofGetMouseX(),ofGetMouseY()));
     } else if (e.key == OF_KEY_F7){
         ofToggleFullscreen();
+
+#ifdef USE_OFXGLEDITOR
         editor.reShape();
-        
         editorFbo.allocate(ofGetWindowWidth(),ofGetWindowHeight());
-        
         editorFbo.begin();
         ofClear(editorBgColor);
         editorFbo.end();
+#endif
     } else {
         //  If no special key was pressed and the GLEditor is present pass the key
         //
