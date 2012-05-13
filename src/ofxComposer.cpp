@@ -23,8 +23,8 @@ string helpScreen = "\n \
                             - r: reset mask path\n \
     \n \
     - F4:   Reset surface coorners\n \
-    - F5:   Add ofxGLEditor (temporal!!!)\n \
-    - F6:   Add ofVideoGrabber (temporal!!!)\n \
+    - F5:   Add ofxGLEditor (temporal!!!) and if have it add ofVideoGrabber (temporal!!!)\n \
+    - F6:   Add ofShader (temporal!!!)\n \
     - F7:   Turn ON/OFF the fullscreen-mode\n \
     \n \
     Mouse and Coorners: \n \
@@ -332,9 +332,15 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
         //  Special keys reserved for Patch Events
         //
     } else if (e.key == OF_KEY_F5 ){
-        bGLEditorPatch = addPatchWithOutFile("ofxGLEditor", ofPoint(ofGetMouseX(),ofGetMouseY()));
+        
+        if ( bGLEditorPatch )
+            addPatchWithOutFile("ofVideoGrabber", ofPoint(ofGetMouseX(),ofGetMouseY()));
+        else
+            bGLEditorPatch = addPatchWithOutFile("ofxGLEditor", ofPoint(ofGetMouseX(),ofGetMouseY()));
+        
     } else if ( e.key == OF_KEY_F6 ){
-        addPatchWithOutFile("ofVideoGrabber", ofPoint(ofGetMouseX(),ofGetMouseY()));
+        addPatchWithOutFile("ofShader", ofPoint(ofGetMouseX(),ofGetMouseY()));
+
     } else if (e.key == OF_KEY_F7){
         ofToggleFullscreen();
 

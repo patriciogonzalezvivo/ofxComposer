@@ -51,7 +51,6 @@ private:
     ofColor     editorFgColor;
 #endif
     
-    
     map<int,ofxPatch*>  patches;
     
     string  configFile;
