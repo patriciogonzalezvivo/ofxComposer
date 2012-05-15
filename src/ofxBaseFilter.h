@@ -1,20 +1,20 @@
 //
-//  ofxBaseMask.h
+//  ofxPatchFilter.h
 //  ofxComposer-example
 //
-//  Created by Patricio González Vivo on 5/13/12.
+//  Created by Patricio González Vivo on 5/15/12.
 //  Copyright (c) 2012 PatricioGonzalezVivo.com. All rights reserved.
 //
 
 #pragma once
 
+#include "ofMain.h"
+
 #include "ofxXmlSettings.h"
-#include "ofxPingPong.h"
 
-
-class ofxBaseMask : public ofPolyline {
+class ofxBaseFilter : public ofPolyline {
 public:
-    ofxBaseMask();
+    ofxBaseFilter();
     
     bool            loadXmlSettings(ofxXmlSettings &_XML);
     bool            saveXmlSettings(ofxXmlSettings &_XML);
@@ -23,5 +23,6 @@ public:
     ofShader        maskShader;
     
     float           maskOpacity;
-    int             selectedMaskCorner;
+    
+    int             selectedPoint;
 };
