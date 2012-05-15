@@ -12,66 +12,86 @@
 
 #include "ofxXmlSettings.h"
 
-#include "ofxPatchMask.h"
-#include "ofxPatchFilter.h"
-#include "ofxPatchTransformation.h"
+#include "ofxBaseMask.h"
+#include "ofxBaseFilter.h"
+#include "ofxBaseTransform.h"
 
 #include "ofxShaderObj.h"
 
-struct LinkDot{
-    LinkDot(){
+struct Link{
+    Link(){
         to = NULL;
         toShader = NULL;
         nTex = 0;
     }
     
     ofPoint     pos;
-    LinkDot     *to;
+    Link        *to;
     int         nTex;
     int         toId;
     ofxShaderObj *toShader;
 };
 
-class ofxPatchBase : public ofRectangle {
+class ofxBasePatch : public ofRectangle {
 public:
     
-    ofxPatchBase();
-    ~ofxPatchBase();
+    ofxBasePatch();
+    ~ofxBasePatch();
+    
+    //  Set
+    //
+    bool            loadType(string _type);
+    bool            loadFile(string _filePath);
     
     bool            loadXmlSettings(ofxXmlSettings &_XML);
     bool            saveXmlSettings(ofxXmlSettings &_XML);
     
-    int             getId();
+    //  Ask
+    int             getId(){ return nId; };
     string          getType();
     ofTexture&      getTextureReference();
+    ofTexture&      getContentTextureReference();
     
+    //  Loops
+    //
     void            update();
     void            draw();
     
-    ofxPatchMask            *mask;
-    ofxPatchFilter          *filter;
-    ofxPatchTransformation  *transformation;
-    
-    vector<LinkDot> outPut;
-    vector<LinkDot> inPut;
-    
-private:
-    void            _mousePressed(ofMouseEventArgs &e);
-    void            _mouseDragged(ofMouseEventArgs &e);
-    void            _mouseReleased(ofMouseEventArgs &e);
-    void            _keyPressed(ofKeyEventArgs &e); 
-    void            _reMakeFrame( int &_nId );
-    
-    ofTexture&      getSrcTexture();
-    
+    //  Content
+    //
     ofImage         *image;
     ofVideoPlayer   *videoPlayer;
     ofVideoGrabber  *videoGrabber;
     ofxShaderObj    *shader;
     ofTexture       *texture;
     
-    ofColor         color;
-    string          type;
+    //  Post-Process
+    //
+    ofxBaseMask         *mask;
+    ofxBaseFilter       *filter;
+    ofxBaseTransform    *transform;
     
+    //  Links
+    //
+    vector<Link> outPut;
+    vector<Link> inPut;
+    
+    //  Flags
+    //
+    bool            bActive, bEditMode, bEditMask, bVisible;
+    
+private:
+    
+    //  Events
+    //
+    void            _mousePressed(ofMouseEventArgs &e);
+    void            _mouseDragged(ofMouseEventArgs &e);
+    void            _mouseReleased(ofMouseEventArgs &e);
+    void            _keyPressed(ofKeyEventArgs &e); 
+    void            _reMakeFrame( int &_nId );
+    
+    //  Variables
+    //
+    ofColor         color;
     int             nId;
 };

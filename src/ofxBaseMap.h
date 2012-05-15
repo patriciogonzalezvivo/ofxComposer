@@ -8,11 +8,12 @@
 
 #pragma once
 
+#include "ofMain.h"
 #include "ofxXmlSettings.h"
 
-class ofxBaseTransformation: public ofPolyline {
+class ofxBaseMap: public ofPolyline {
 public:
-    ofxBaseTransformation();
+    ofxBaseMap();
     
     bool            loadXmlSettings(ofxXmlSettings &_XML);
     bool            saveXmlSettings(ofxXmlSettings &_XML);
@@ -27,7 +28,8 @@ public:
 
     void            update();
     
-    int             selectedPoint;
+    int             selectedCorner;
+    bool            needUpdate;
     
 private:
     void            doSurfaceToScreenMatrix();

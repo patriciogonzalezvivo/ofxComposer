@@ -12,17 +12,11 @@
 
 #include "ofxXmlSettings.h"
 
-class ofxBaseFilter : public ofPolyline {
+class ofxBaseFilter {
 public:
     ofxBaseFilter();
     
     bool            loadXmlSettings(ofxXmlSettings &_XML);
     bool            saveXmlSettings(ofxXmlSettings &_XML);
     
-    ofxPingPong     maskFbo;
-    ofShader        maskShader;
-    
-    float           maskOpacity;
-    
-    int             selectedPoint;
 };

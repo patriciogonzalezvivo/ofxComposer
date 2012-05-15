@@ -1449,7 +1449,7 @@ bool ofxPatch::saveSettings(string _configFile){
                             for(int j = 0; j < maskCorners.size(); j++){
                                 int tagNum = j;
                                 
-                                if (i >= totalSavedPoints)
+                                if (j >= totalSavedPoints)
                                     tagNum = XML.addTag("point");
                                 
                                 XML.setValue("point:x",maskCorners[j].x, tagNum);

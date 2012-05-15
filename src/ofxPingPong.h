@@ -43,7 +43,7 @@ public:
     ofFbo   *src;       // Source       ->  Ping
     ofFbo   *dst;       // Destination  ->  Pong
     
-private:
+protected:
     ofFbo   FBOs[2];    // Real addresses of ping/pong FBO´s  
     int     flag;       // Integer for making a quick swap
 };
