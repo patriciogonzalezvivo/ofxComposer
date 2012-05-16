@@ -30,6 +30,34 @@ public:
         doSurfaceToScreenMatrix();
     }
     
+    void    draw(){
+        // Draw dragables texture corners
+        //
+        for(int i = 0; i < 4; i++){
+            if (( selectedCorner == i) || 
+                ( ofDist(ofGetMouseX(), 
+                         ofGetMouseY(),
+                         getVertices()[i].x,
+                         getVertices()[i].y) <= 4 ) ) 
+                ofSetColor(200,255);
+            else 
+                ofSetColor(200,100);
+            
+            ofRect(getVertices()[i].x-4,
+                   getVertices()[i].y-4, 
+                   8,
+                   8 );
+            
+            // Draw contour Line
+            //
+            ofLine(getVertices()[i].x, 
+                   getVertices()[i].y, 
+                   getVertices()[(i+1)%4].x, 
+                   getVertices()[(i+1)%4].y );
+        }
+    }
+    
+    //ofPolyline      corners;
     int             selectedCorner;
     bool            needUpdate;
     

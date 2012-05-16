@@ -91,6 +91,7 @@ protected:
     
     //  Variables
     //
+    ofPoint         outPutPos;
     ofColor         color;
     int             nId;
 };

@@ -146,11 +146,9 @@ void ofxBasePatch::update(){
     }
     
     if (mask != NULL) {
-        
         if (mask->needUpdate){
             mask->allocate(width,height);
             mask->makeMask();
-            
             mask->needUpdate = false;
         }
             
@@ -173,20 +171,17 @@ void ofxBasePatch::update(){
     if (map != NULL){
         if (map->needUpdate){
             map->update();
+            set(map->getBoundingBox());
+            map->needUpdate = false;
             
-            
-            
-            box = textureCorners.getBoundingBox();
-            outPutPos.set( box.x + box.width + 4, box.y + box.height*0.5 );
+            outPutPos.set( x + width + 4, y + height*0.5 );
             for(int i = 0; i < outPut.size(); i++){
                 outPut[i].pos = outPutPos;
             }
             int total = inPut.size();
             for(int i = 0; i < total; i++){
-                inPut[i].pos.set( box.x - 4, box.y + (box.height/(total))* (i+0.5) );
+                inPut[i].pos.set( x - 4, y + (height/(total))* (i+0.5) );
             }
-            
-            bUpdateCoord = false;
         }
     }
     
@@ -209,7 +204,7 @@ void ofxBasePatch::update(){
     }
 }
 
-void ofxPatch::draw(){
+void ofxBasePatch::draw(){
     
     if ( bEditMode || bVisible ) {
         
@@ -220,7 +215,10 @@ void ofxPatch::draw(){
         
         
         ofPushMatrix();
-        glMultMatrixf(glMatrix);
+        
+        if (map != NULL)
+            glMultMatrixf(map->getGlMatrix());
+        
         ofSetColor(color);
         getTextureReference().draw(0,0);
         ofPopMatrix();
@@ -228,51 +226,18 @@ void ofxPatch::draw(){
     
     if (bEditMode){
         ofPushStyle();
-        
-        if (title != NULL)
-            title->draw();
-        
+                
         if ( !bEditMask ){
             ofFill();
-            // Draw dragables texture corners
-            //
-            for(int i = 0; i < 4; i++){
-                if ( ( selectedTextureCorner == i) || ( ofDist(ofGetMouseX(), ofGetMouseY(), textureCorners[i].x, textureCorners[i].y) <= 4 ) ) ofSetColor(200,255);
-                else ofSetColor(color,100);
+            
+            if (map != NULL){
                 
-                ofRect(textureCorners[i].x-4,textureCorners[i].y-4, 8,8);
-                
-                // Draw contour Line
-                //
-                ofLine(textureCorners[i].x, textureCorners[i].y, textureCorners[(i+1)%4].x, textureCorners[(i+1)%4].y);
-            }
+            } 
         } else {
             // Draw dragables mask corners
             //
-            for(int i = 0; i < maskCorners.size(); i++){
-                ofVec3f pos = ofVec3f( maskCorners[i].x * width, maskCorners[i].y * height, 0.0);
-                pos = surfaceToScreenMatrix * pos;
-                
-                if ( (selectedMaskCorner == i) || ( ofDist(ofGetMouseX(), ofGetMouseY(), pos.x, pos.y) <= 4 ) ) {
-                    ofSetColor(255,255);
-                    ofCircle( pos, 4);
-                    ofSetColor(255,100);
-                    ofFill();
-                } else {
-                    ofNoFill();
-                    ofSetColor(255,100);
-                }
-                
-                ofCircle( pos, 4);
-                
-                // Draw contour mask line
-                //
-                ofSetColor(255,200);
-                ofVec3f nextPos = ofVec3f(maskCorners[(i+1)%maskCorners.size()].x*width, 
-                                          maskCorners[(i+1)%maskCorners.size()].y*height, 0.0);
-                nextPos = surfaceToScreenMatrix * nextPos;
-                ofLine(pos.x,pos.y,nextPos.x,nextPos.y);
-            }
+            if (mask != NULL)
+                mask->draw();
         }
         
         if (type == "ofShader"){

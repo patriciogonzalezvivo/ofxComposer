@@ -106,6 +106,33 @@ public:
         dst->end();
     }
     
+    void    draw(float _width, float _height){
+        for(int i = 0; i < corners.size(); i++){
+            ofVec3f pos = ofVec3f( corners[i].x * _width, corners[i].y * _height, 0.0);
+            pos = surfaceToScreenMatrix * pos;
+            
+            if ( (selectedMaskCorner == i) || ( ofDist(ofGetMouseX(), ofGetMouseY(), pos.x, pos.y) <= 4 ) ) {
+                ofSetColor(255,255);
+                ofCircle( pos, 4);
+                ofSetColor(255,100);
+                ofFill();
+            } else {
+                ofNoFill();
+                ofSetColor(255,100);
+            }
+            
+            ofCircle( pos, 4);
+            
+            // Draw contour mask line
+            //
+            ofSetColor(255,200);
+            ofVec3f nextPos = ofVec3f(maskCorners[(i+1)%maskCorners.size()].x*width, 
+                                      maskCorners[(i+1)%maskCorners.size()].y*height, 0.0);
+            nextPos = surfaceToScreenMatrix * nextPos;
+            ofLine(pos.x,pos.y,nextPos.x,nextPos.y);
+        }
+    }
+    
     ofShader        shader;
     ofPolyline      corners;
     
