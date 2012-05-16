@@ -22,9 +22,10 @@ ofxBasePatch::ofxBasePatch(){
     
     //  Post-Process
     //
+    map         = NULL;
     mask        = NULL;
     filter      = NULL;
-    transform   = NULL;
+    
     
     //  Flags
     //
@@ -68,8 +69,8 @@ ofxBasePatch::~ofxBasePatch(){
     if ( filter != NULL )
         delete filter;
     
-    if ( transform != NULL )
-        delete transform;
+    if ( map != NULL )
+        delete map;
     
     //  Delete Links
     //
@@ -140,8 +141,8 @@ void ofxBasePatch::update(){
         width = getContentTextureReference().getWidth();
         height = getContentTextureReference().getHeight();
         
-        bUpdateCoord = true;
-        bUpdateMask = true;
+        if (map != NULL) map->needUpdate = true;
+        if (mask != NULL) mask->needUpdate = true;
     }
     
     if (mask != NULL) {
@@ -150,7 +151,7 @@ void ofxBasePatch::update(){
             mask->allocate(width,height);
             mask->makeMask();
             
-            bUpdateMask = false;
+            mask->needUpdate = false;
         }
             
         if ( inside(ofGetMouseX(), ofGetMouseY()) && (bEditMode)){
@@ -169,9 +170,11 @@ void ofxBasePatch::update(){
         mask->end();
     }
     
-    if (transformation != NULL){
-        if (transformation->needUpdate){
-            doSurfaceToScreenMatrix();
+    if (map != NULL){
+        if (map->needUpdate){
+            map->update();
+            
+            
             
             box = textureCorners.getBoundingBox();
             outPutPos.set( box.x + box.width + 4, box.y + box.height*0.5 );

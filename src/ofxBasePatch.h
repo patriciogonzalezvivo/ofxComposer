@@ -12,9 +12,9 @@
 
 #include "ofxXmlSettings.h"
 
+#include "ofxBaseMap.h"
 #include "ofxBaseMask.h"
 #include "ofxBaseFilter.h"
-#include "ofxBaseTransform.h"
 
 #include "ofxShaderObj.h"
 
@@ -67,9 +67,9 @@ public:
     
     //  Post-Process
     //
-    ofxBaseMask         *mask;
-    ofxBaseFilter       *filter;
-    ofxBaseTransform    *transform;
+    ofxBaseMask     *mask;
+    ofxBaseFilter   *filter;
+    ofxBaseMap      *map;
     
     //  Links
     //
@@ -80,8 +80,7 @@ public:
     //
     bool            bActive, bEditMode, bEditMask, bVisible;
     
-private:
-    
+protected:
     //  Events
     //
     void            _mousePressed(ofMouseEventArgs &e);

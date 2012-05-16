@@ -26,7 +26,9 @@ public:
     void            scale(float _scale);
     void            rotate(float _angle);
 
-    void            update();
+    void            update(){
+        doSurfaceToScreenMatrix();
+    }
     
     int             selectedCorner;
     bool            needUpdate;
