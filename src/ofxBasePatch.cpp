@@ -205,7 +205,7 @@ void ofxBasePatch::update(){
 }
 
 void ofxBasePatch::draw(){
-    
+    /*
     if ( bEditMode || bVisible ) {
         
         if (bActive || !bEditMode || (type == "ofxGLEditor"))
@@ -282,6 +282,7 @@ void ofxBasePatch::draw(){
             }
         }
     }
+     */
 }
 
 void ofxBasePatch::_mousePressed(ofMouseEventArgs &e){

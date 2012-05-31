@@ -107,9 +107,10 @@ public:
     }
     
     void    draw(float _width, float _height){
+        /*
         for(int i = 0; i < corners.size(); i++){
             ofVec3f pos = ofVec3f( corners[i].x * _width, corners[i].y * _height, 0.0);
-            pos = surfaceToScreenMatrix * pos;
+            //pos = surfaceToScreenMatrix * pos;
             
             if ( (selectedMaskCorner == i) || ( ofDist(ofGetMouseX(), ofGetMouseY(), pos.x, pos.y) <= 4 ) ) {
                 ofSetColor(255,255);
@@ -131,6 +132,7 @@ public:
             nextPos = surfaceToScreenMatrix * nextPos;
             ofLine(pos.x,pos.y,nextPos.x,nextPos.y);
         }
+         */
     }
     
     ofShader        shader;

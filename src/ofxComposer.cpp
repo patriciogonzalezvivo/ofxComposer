@@ -52,7 +52,7 @@ ofxComposer::ofxComposer(){
     editorFgColor.set(0,0);
     editorFbo.allocate(ofGetWindowWidth(), ofGetWindowHeight());
     editorFbo.begin();
-    ofClear(editorBgColor);
+    ofClear(editorBgColor.r,editorBgColor.g,editorBgColor.b,editorBgColor.a);
     editorFbo.end();
 #endif
     
@@ -262,7 +262,7 @@ void ofxComposer::update(){
         
         editorFbo.begin();
         //ofEnableAlphaBlending();
-        ofClear(editorBgColor);
+        ofClear(editorBgColor.r,editorBgColor.g,editorBgColor.b,editorBgColor.a);
         ofDisableBlendMode();
         ofRotate(180, 0, 1, 0);
         ofSetColor(255,255);
@@ -348,7 +348,7 @@ void ofxComposer::_keyPressed(ofKeyEventArgs &e){
         editor.reShape();
         editorFbo.allocate(ofGetWindowWidth(),ofGetWindowHeight());
         editorFbo.begin();
-        ofClear(editorBgColor);
+        ofClear(editorBgColor.r,editorBgColor.g,editorBgColor.b,editorBgColor.a);
         editorFbo.end();
 #endif
     } else {
@@ -463,7 +463,7 @@ void ofxComposer::_windowResized(ofResizeEventArgs &e){
     editor.reShape();
     editorFbo.allocate(e.width, e.height);
     editorFbo.begin();
-    ofClear(editorBgColor);
+    ofClear(editorBgColor.r,editorBgColor.g,editorBgColor.b,editorBgColor.a);
     editorFbo.end();
 #endif
 }
