@@ -27,10 +27,18 @@ public:
     bool    addPatchFromFile(string _filePath, ofPoint _position);
     bool    addPatchWithOutFile(string _type, ofPoint _position);
     
+    int     size(){return patches.size(); };
     ofxPatch* operator[](int _nID){ if ( (_nID != -1) && (patches[_nID] != NULL) ) return patches[_nID]; };
     
     void    update();
     void    draw();
+    
+    void    setEdit(bool _state){
+        bEditMode = _state;
+        for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+            it->second->bEditMode = bEditMode;
+        }
+    }
     
 private:
     // Events
@@ -58,7 +66,8 @@ private:
     int     selectedDot;
     int     selectedID;
     
-    bool    bEditMode, bGLEditorPatch, bHelp;
+    bool    bEditMode;
+    bool    bGLEditorPatch, bHelp;
 };
 
 
