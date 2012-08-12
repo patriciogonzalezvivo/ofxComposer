@@ -33,15 +33,15 @@ You can resize patches draging the corners. Pressing ALT key will re-size center
 
 Or you can stretch and deform the patch by right-clicking on the coorners
 
-![strach](http://patriciogonzalezvivo.com/images/ofxComposer-distort.png)
+![strach](http://patriciogonzalezvivo.com/images/ofxcomposer/distort.png)
 
 Also you can rotate the image by draging with 'r' key pressed
 
-![strach](http://patriciogonzalezvivo.com/images/ofxComposer-rotate.png)
+![strach](http://patriciogonzalezvivo.com/images/ofxcomposer/rotate.png)
 
 More options happen on the titleBar of the patch there you will find some letter-buttons at the left.
 
-![titleBar](http://patriciogonzalezvivo.com/images/ofxComposer-titleBar.png)
+![titleBar](http://patriciogonzalezvivo.com/images/ofxcomposer/titleBar.png)
 
 The first 'x' button it´s for closing. It will also delete the information from the xml config file.
 
@@ -49,7 +49,7 @@ The second 'r' button it´s for restoring the patch to it original size.
 
 The next button it´s for switching ON/OFF from the MaskMode.
 
-![titleBar](http://patriciogonzalezvivo.com/images/ofxComposer-mask.png)
+![titleBar](http://patriciogonzalezvivo.com/images/ofxcomposer/mask.png)
 
 On MaskMode you can:
     
@@ -63,7 +63,7 @@ Pressing 'F1' will show a help screen. Wile pressing 'F2' key will switch betwee
     
 Also you will notice that each patch have some dots at the sides  that are for connecting between them (left input´s / right output). For the moment the only patch that are able to receive texture information are the shaders ones.
 
-![titleBar](http://patriciogonzalezvivo.com/images/ofxComposer-connect.png)
+![titleBar](http://patriciogonzalezvivo.com/images/ofxcomposer/connect.png)
 
 Each shader could be edited on the fly using [ofxGLEditor](https://github.com/Akira-Hayasaka/ofxGLEditor). 
 
@@ -77,7 +77,7 @@ So you have:
     uniform sampler2DRect backbuffer // previus texture for pingpong dinamic )
     uniform sampler2DRect tex0, tex1, tex2, ... // each time you add one of this ones you will get a input conection dot, that you can connect to others patches 
 
-![titleBar](http://patriciogonzalezvivo.com/images/ofxComposer-editShader.png)
+![titleBar](http://patriciogonzalezvivo.com/images/ofxcomposer/editShader.png)
 
 Also you can explore ofxGLEditor because it have some other handy shortcut key bindings like copy and paste.
 
