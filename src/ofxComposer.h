@@ -14,7 +14,7 @@
 
 //  Comment the "define USE_OFXGLEDITOR" if you don't want to use ofxGLEditor
 //
-#define USE_OFXGLEDITOR
+//#define USE_OFXGLEDITOR
 #ifdef USE_OFXGLEDITOR
 #include "ofxGLEditor.h"
 #endif
@@ -23,6 +23,7 @@ class ofxComposer {
 public:
     ofxComposer();
     
+    void    save(string _fileConfig = "default");
     void    load(string _fileConfig = "default");
     bool    addPatchFromFile(string _filePath, ofPoint _position);
     bool    addPatchWithOutFile(string _type, ofPoint _position);

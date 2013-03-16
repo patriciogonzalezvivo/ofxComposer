@@ -137,6 +137,16 @@ void ofxComposer::load(string _fileConfig){
     }
 }
 
+void ofxComposer::save(string _fileConfig ){
+    if (_fileConfig != "default"){
+        configFile = _fileConfig;
+    }
+    
+    for(map<int,ofxPatch*>::iterator it = patches.begin(); it != patches.end(); it++ ){
+        it->second->saveSettings(configFile);
+    }
+}
+
 bool ofxComposer::addPatchFromFile(string _filePath, ofPoint _position){
     bool loaded = false;
     
