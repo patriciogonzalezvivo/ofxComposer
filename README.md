@@ -3,23 +3,29 @@
 [This addons idea](https://github.com/patriciogonzalezvivo/ofxComposer) came up together with [James George](http://www.jamesgeorge.org/) at Detroit´s oF DevCon 2012. It consist on a set of connecting boxes that let you load and processes different type of data on the GPU. 
 It´s designed to be flexible and visualy minimalist for quick editing on life performances. Also it's very handy for graphical debugging, editing GLSL Shaders on the fly, and as a `ofxGui` complement . 
 
-## Installation
+# Installing
+Clone [this addon repository](https://github.com/patriciogonzalezvivo/ofxComposer) into your `openFrameworks/addons` together with Akira´s [ofxGLEditor](https://github.com/Akira-Hayasaka/ofxGLEditor):
 
-Require:
+	cd openFrameworks/addons
+	git clone https://github.com/patriciogonzalezvivo/ofxPulseSensor
+	git clone https://github.com/Akira-Hayasaka/ofxGLEditor
 
- - Akira´s [ofxGLEditor](https://github.com/Akira-Hayasaka/ofxGLEditor) addon
+## Use
 
 Once you download and add this addons to your project you need to include "ofxComposer.h" and add it as an object. 
 
 ofxComposer will need a .xml file where to load and save the information of your patches. That xml file have to be placed on /data folder. 
 
 You just need to load a config file:
+
 	composer.load("config.xml");
 
-To update it en each update() method:
+To update it en each `update()` method:
+
 	composer.update();
 
-And render everything on each draw() method_
+And render everything on each `draw()` method:
+
 	composer.draw();
 
 ## General use
