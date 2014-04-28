@@ -1,15 +1,12 @@
-# [ofxComposer](http://patriciogonzalezvivo.com/2012/ofxcomposer/)
-[![ofxComposer](http://patriciogonzalezvivo.com/2012/ofxcomposer/thumb.jpg)](http://patriciogonzalezvivo.com/2012/ofxcomposer/)
+<iframe src="http://player.vimeo.com/video/38858952?autoplay=1" width="575" height="359" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>
 
-This idea came up with James George at Detroit´s oF DevCon 2012. It consist on a set of connecting boxes that let you load and processes different type of data on the GPU. 
+[This addons idea](https://github.com/patriciogonzalezvivo/ofxComposer) came up together with [James George](http://www.jamesgeorge.org/) at Detroit´s oF DevCon 2012. It consist on a set of connecting boxes that let you load and processes different type of data on the GPU. 
 It´s designed to be flexible and visualy minimalist for quick editing on life performances. Also it's very handy for graphical debugging, editing GLSL Shaders on the fly, and as a `ofxGui` complement . 
 
 ## Installation
 
 Require:
 
- - last openFrameworks libraries from the [develop](https://github.com/patriciogonzalezvivo/openFrameworks/tree/develop) repository 
- - ofxXmlSettings 
  - Akira´s [ofxGLEditor](https://github.com/Akira-Hayasaka/ofxGLEditor) addon
 
 Once you download and add this addons to your project you need to include "ofxComposer.h" and add it as an object. 
@@ -86,6 +83,5 @@ Also you can explore ofxGLEditor because it have some other handy shortcut key b
 
 On the example you will see how the xml it´s made. This particular config.xml It´ll load ofxGLEditor, your webcam video and a basic shader. You can try new combination by dragging different files (like videos, images and fragment shaders files) to the app windows.
 
-Also you can see some [video tutorials at this link](http://www.patriciogonzalezvivo.com/blog/?p=585&preview=true&preview_id=585&preview_nonce=76dfe3d870)
 
 Enjoy && contribute!
