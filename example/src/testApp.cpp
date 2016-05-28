@@ -57,7 +57,7 @@ void testApp::gotMessage(ofMessage msg){
 void testApp::dragEvent(ofDragInfo dragInfo){
     if( dragInfo.files.size() > 0 ){
 		for(int i = 0; i < dragInfo.files.size(); i++){
-            composer.addPatch( dragInfo.files[i], dragInfo.position );
+            composer.addPatchFromFile( dragInfo.files[i], dragInfo.position );
 		}
 	}
 }
